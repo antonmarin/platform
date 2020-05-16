@@ -23,10 +23,4 @@ resource "google_compute_instance" "vm_instance" {
     access_config {
     }
   }
-
-  provisioner "remote-exec" {
-    inline = [
-      "echo Hello"
-    ]
-  }
 }
