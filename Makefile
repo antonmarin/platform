@@ -4,5 +4,4 @@ help:
 	@printf "\
 		help\t this help\n\
 		\n\
-		To destroy use \'terraform destroy\'\n\
 	"
