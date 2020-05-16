@@ -26,7 +26,7 @@ resource "google_compute_instance" "vm_instance" {
 
   provisioner "remote-exec" {
     inline = [
-      "mkdir -p /home/runner/api-tms/"
+      "echo Hello"
     ]
   }
 }
