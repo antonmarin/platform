@@ -2,9 +2,14 @@ provider "google" {
   version = "~> 3.4"
   credentials = var.google_service_account
 
-  project = "mythic-guild-264223"
+  project = var.gcp_project
   region  = "us-central1"
   zone    = "us-central1-c"
+}
+
+
+resource "google_compute_network" "vpc_network" {
+  name = "terraform-network"
 }
 
 resource "google_compute_instance" "vm_instance" {
@@ -23,4 +28,9 @@ resource "google_compute_instance" "vm_instance" {
     access_config {
     }
   }
+}
+
+
+output "ip" {
+  value = google_compute_instance.vm_instance.network_interface.0.access_config.0.nat_ip
 }
