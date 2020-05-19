@@ -1,5 +1,5 @@
 provider "google" {
-  version = "~> 3.4"
+  version     = "~> 3.4"
   credentials = var.google_service_account
 
   project = var.gcp_project
@@ -32,6 +32,10 @@ resource "google_compute_instance" "vm_instance" {
     access_config {
       nat_ip = google_compute_address.vm_static_ip.address
     }
+  }
+
+  metadata = {
+    ssh-keys = join("\n", [for user, key in var.ssh_keys : "${user}:${key}"])
   }
 }
 
