@@ -9,6 +9,6 @@ variable "gcp_project" {
 
 variable "ssh_keys" {
   type        = map(string)
-  description = "Map of users ssh-keys (user=key_content)"
+  description = "Map of users ssh-keys (user=key_content). Use HCL in Terraform Cloud"
 }
 

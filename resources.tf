@@ -7,6 +7,11 @@ provider "google" {
   zone    = "us-central1-c"
 }
 
+resource "google_compute_project_metadata" "default" {
+  metadata = {
+    ssh-keys = join("\n", [for user, key in var.ssh_keys : "${user}:${key}"])
+  }
+}
 
 resource "google_compute_network" "vpc_network" {
   name = "terraform-network"
@@ -32,10 +37,6 @@ resource "google_compute_instance" "vm_instance" {
     access_config {
       nat_ip = google_compute_address.vm_static_ip.address
     }
-  }
-
-  metadata = {
-    ssh-keys = join("\n", [for user, key in var.ssh_keys : "${user}:${key}"])
   }
 }
 
