@@ -18,8 +18,8 @@ resource "google_compute_network" "vpc_network" {
 }
 
 resource "google_compute_firewall" "vpc_network_ssh" {
-  name    = "ssh-access"
-  network = google_compute_network.vpc_network.name
+  name           = "ssh-access"
+  network        = google_compute_network.vpc_network.name
   enable_logging = true
 
   allow {

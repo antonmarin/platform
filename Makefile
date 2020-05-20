@@ -12,8 +12,11 @@ help:
 format:
 	terraform fmt
 
-lint:
+lint: lint-terraform lint-yaml
+lint-terraform:
 	terraform validate
+lint-yaml:
+	docker run --rm -v "$(PWD):/app" -w /app sdesbure/yamllint sh -c "yamllint **/*.yml"
 
 ssh:
 	ssh antonmarin@$(PLATFORM_SERVER_IP)
