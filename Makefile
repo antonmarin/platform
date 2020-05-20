@@ -1,4 +1,6 @@
 .DEFAULT_GOAL=help
+include .env
+export $(shell sed 's/=.*//' .env)
 
 help:
 	@printf "\
@@ -12,3 +14,6 @@ format:
 
 lint:
 	terraform validate
+
+ssh:
+	ssh antonmarin@$(PLATFORM_SERVER_IP)
