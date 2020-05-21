@@ -7,6 +7,8 @@ help:
 		help\t this help\n\
 		format\t Format terraform files\n\
 		lint\t Validate configuration files\n\
+		run\t Start built-in services\n\
+		ssh\t SSH to server\n\
 	"
 
 format:
