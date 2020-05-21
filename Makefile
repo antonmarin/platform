@@ -20,6 +20,6 @@ lint-yaml:
 
 run: run-ingress
 run-ingress:
-	export $$(egrep -v '^#' ingress/.env | xargs) && docker-compose -f ingress/docker-compose.yml up -d
+	docker-compose -f ingress/docker-compose.yml --env-file ingress/.env up -d
 ssh:
 	ssh antonmarin@$(PLATFORM_SERVER_IP)
