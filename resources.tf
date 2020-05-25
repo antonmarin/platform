@@ -51,6 +51,10 @@ resource "google_compute_instance" "vm_instance" {
       nat_ip = google_compute_address.vm_static_ip.address
     }
   }
+
+  metadata = {
+    user-data = file("cloud-init-user-data.yml")
+  }
 }
 
 
