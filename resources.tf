@@ -53,7 +53,7 @@ resource "google_compute_instance" "vm_instance" {
   }
 
   metadata = {
-    user-data = file("cloud-init-user-data.yml")
+    user-data = data.template_cloudinit_config.config.rendered
   }
 }
 
