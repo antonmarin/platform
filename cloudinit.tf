@@ -8,5 +8,6 @@ data "template_cloudinit_config" "config" {
     content = templatefile("cloudinit-ingress.yml", {
       docker-compose-config = file("ingress/docker-compose.yml")
     })
+    content_type = "text/cloud-config"
   }
 }

@@ -17,6 +17,7 @@ format:
 lint: lint-terraform lint-yaml
 lint-terraform:
 	terraform validate
+	docker run --rm -v $(PWD):/data -t wata727/tflint
 lint-yaml:
 	docker run --rm -v "$(PWD):/app" -w /app sdesbure/yamllint sh -c "yamllint **/*.yml"
 
