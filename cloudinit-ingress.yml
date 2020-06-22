@@ -3,4 +3,4 @@ write_files:
     permissions: 0644
     content: "${file("ingress/docker-compose.yml")}"
 runcmd:
-  - docker-compose -f /app/ingress/docker-compose.yml up -d
+  - docker-compose -f /apps/ingress/docker-compose.yml up -d
