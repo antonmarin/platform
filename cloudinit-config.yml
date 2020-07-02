@@ -1,0 +1,8 @@
+output:
+  init:
+    output: "> /var/log/cloud-init/cloud-init.out"
+    error: "> /var/log/cloud-init/cloud-init.err"
+  config: "tee -a /var/log/cloud-init/cloud-config.log"
+  final:
+    - ">> /var/log/cloud-init/cloud-final.out"
+    - "/var/log/cloud-init/cloud-final.err"
