@@ -24,6 +24,6 @@ data "cloudinit_config" "config" {
 
   part {
     content_type = "text/x-shellscript"
-    content      = "echo 123 > ~/123.txt"
+    content      = "#!/bin/bash\necho bing > /tmp/baz\n"
   }
 }
