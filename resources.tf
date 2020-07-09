@@ -41,7 +41,7 @@ resource "google_compute_instance" "vm_instance" {
 
   boot_disk {
     initialize_params {
-      image = "coreos-cloud/coreos-stable"
+      image = "cos-cloud/cos-stable"
     }
   }
 
