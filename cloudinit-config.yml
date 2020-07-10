@@ -1,3 +1,4 @@
+#cloud-config
 output:
   init:
     output: "> /var/log/cloud-init/cloud-init.out"
