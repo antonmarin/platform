@@ -1,6 +1,0 @@
-#cloud-config
-
-write_files:
-  - path: /tmp/test
-    permissions: 0644
-    content: "asdfgas"
