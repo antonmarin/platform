@@ -19,14 +19,12 @@ help: #? help me
 format: #? format terraform files
 	terraform fmt
 
-lint: lint-terraform lint-yaml lint-cloud-init #? pre-run validations
+lint: lint-terraform lint-yaml #? pre-run validations
 lint-terraform:
 	terraform validate
 	docker run --rm -v $(PWD):/data -t wata727/tflint
 lint-yaml:
 	docker run --rm -v "$(PWD):/app" -w /app sdesbure/yamllint sh -c "yamllint **/*.yml"
-lint-cloud-init:
-	docker run --rm -v "$(PWD):/app" -w /app nonstatic/cloud-init:v1 cloud-init devel schema --config-file /app/cloud-init.cfg
 
 run: run-ingress #? start built in services locally
 run-ingress:
