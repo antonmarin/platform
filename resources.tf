@@ -43,11 +43,6 @@ resource "google_compute_instance" "vm_instance" {
       "mkdir -p /var/apps"
     ]
   }
-
-  provisioner "file" {
-    source      = "ingress"
-    destination = "/var/apps"
-  }
 }
 
 output "ip" {
