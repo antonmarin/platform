@@ -38,9 +38,15 @@ resource "google_compute_instance" "vm_instance" {
     host        = google_compute_address.vm_static_ip.address
   }
 
+  provisioner "remote-exec" {
+    inline = [
+      "mkdir -p /var/apps"
+    ]
+  }
+
   provisioner "file" {
     source      = "ingress"
-    destination = "/home/provisioner"
+    destination = "/var/apps"
   }
 }
 
