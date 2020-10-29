@@ -40,13 +40,13 @@ resource "google_compute_instance" "vm_instance" {
 
   provisioner "remote-exec" {
     inline = [
-      "mkdir -p /var/apps",
+      "mkdir -p /tmp/apps",
     ]
   }
 
   provisioner "file" {
     source      = "ingress"
-    destination = "/var/apps"
+    destination = "/tmp/apps"
   }
 }
 
