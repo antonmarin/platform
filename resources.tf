@@ -30,13 +30,6 @@ resource "google_compute_instance" "vm_instance" {
       nat_ip = google_compute_address.vm_static_ip.address
     }
   }
-
-  connection {
-    type        = "ssh"
-    user        = "root"
-    private_key = var.root_key
-    host        = google_compute_address.vm_static_ip.address
-  }
 }
 
 output "ip" {
