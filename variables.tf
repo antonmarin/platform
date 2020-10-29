@@ -11,3 +11,8 @@ variable "ssh_keys" {
   type        = map(string)
   description = "Map of users ssh-keys (user=key_content). Use HCL in Terraform Cloud"
 }
+
+variable "provisioner_key" {
+  type = string
+  description = "Private SSH key used by provisioner to init VMs"
+}
