@@ -37,12 +37,6 @@ resource "google_compute_instance" "vm_instance" {
     private_key = var.root_key
     host        = google_compute_address.vm_static_ip.address
   }
-
-  provisioner "remote-exec" {
-    inline = [
-      "mkdir -p /var/apps"
-    ]
-  }
 }
 
 output "ip" {
