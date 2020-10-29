@@ -36,6 +36,8 @@ indent_style = tab
 
 [*.tf]
 indent_size = 2
+[*.tfvars]
+indent_size = 2
 
 [*.ts]
 indent_size = 2
