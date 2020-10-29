@@ -30,6 +30,8 @@ resource "google_compute_instance" "vm_instance" {
       nat_ip = google_compute_address.vm_static_ip.address
     }
   }
+
+  metadata_startup_script = "mkdir -p /var/apps"
 }
 
 output "ip" {
