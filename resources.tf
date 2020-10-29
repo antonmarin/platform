@@ -40,7 +40,7 @@ resource "google_compute_instance" "vm_instance" {
 
   provisioner "file" {
     source      = "ingress/docker-compose.yml"
-    destination = "/home/antonmarin/ingress/docker-compose.yml"
+    destination = "/var/apps/ingress/docker-compose.yml"
   }
 }
 
