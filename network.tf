@@ -5,7 +5,7 @@ resource "google_compute_network" "vpc_network" {
 resource "google_compute_firewall" "vpc_network_ssh" {
   name    = "ssh-access"
   network = google_compute_network.vpc_network.name
-  log_config = {
+  log_config {
     metadata = "INCLUDE_ALL_METADATA"
   }
 
