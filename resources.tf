@@ -32,10 +32,10 @@ resource "google_compute_instance" "vm_instance" {
   }
 
   connection {
-    type     = "ssh"
-    user     = "provisioner"
+    type        = "ssh"
+    user        = "provisioner"
     private_key = var.ssh_keys.provisioner
-    host     = google_compute_address.vm_static_ip.address
+    host        = google_compute_address.vm_static_ip.address
   }
 
   provisioner "file" {
