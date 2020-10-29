@@ -42,10 +42,6 @@ resource "google_compute_instance" "vm_instance" {
     source      = "ingress"
     destination = "/home/provisioner"
   }
-
-  provisioner "remote-exec" {
-    script = "ingress/provision.sh"
-  }
 }
 
 output "ip" {
