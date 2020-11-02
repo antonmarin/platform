@@ -2,7 +2,7 @@
 
 write_files:
   - path: /var/apps/ingress/docker-compose.yml
-    content: ${docker-compose-config}
+    content: jsonencode(${docker-compose-config})
 
 runcmd:
   - mkdir -p /var/apps

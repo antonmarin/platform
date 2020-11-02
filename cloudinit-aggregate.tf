@@ -1,5 +1,5 @@
 data "cloudinit_config" "config" {
-  gzip = false
+  gzip          = false
   base64_encode = false
 
   part {
