@@ -5,7 +5,7 @@ data "cloudinit_config" "config" {
   part {
     filename = "config.cfg"
     content = templatefile(
-      "cloud-init.cfg",
+      "cloud-init.yaml",
       {}
     )
     content_type = "text/cloud-config"

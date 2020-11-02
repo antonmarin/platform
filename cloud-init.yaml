@@ -3,5 +3,7 @@
 write_files:
   - path: /tmp/cloud-init-loaded
     permissions: 0644
-    content: "yes"
+    content: "yes\n"
 
+runcmd:
+  - mkdir -p /var/apps
