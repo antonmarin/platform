@@ -1,9 +1,8 @@
 #cloud-config
 
 write_files:
-  - path: /tmp/cloud-init-loaded
-    permissions: 0644
-    content: "yes\n"
+  - path: /var/apps/ingress/docker-compose.yml
+    content: ${docker-compose-config}
 
 runcmd:
   - mkdir -p /var/apps
