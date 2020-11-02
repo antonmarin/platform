@@ -31,7 +31,9 @@ resource "google_compute_instance" "vm_instance" {
     }
   }
 
-  metadata_startup_script = "mkdir -p /var/apps"
+  metadata = {
+    user-data = data.cloudinit_config.config.rendered
+  }
 }
 
 output "ip" {
