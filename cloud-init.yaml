@@ -7,7 +7,7 @@ write_files:
     encoding: b64
     content: ${filebase64("ingress/docker-compose.yml")}
   - path: /var/apps/${app.app_name}/.env
-    content: ${app.dot_env_file_content}
+    content: "${app.dot_env_file_content}"
   %{ endfor ~}
 
 runcmd:
