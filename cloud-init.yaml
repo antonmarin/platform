@@ -2,6 +2,7 @@
 
 write_files:
   %{ for app in platform_apps ~}
+  
   - path: /var/apps/${app.app_name}/docker-compose.yml
     encoding: b64
     content: ${filebase64("ingress/docker-compose.yml")}
