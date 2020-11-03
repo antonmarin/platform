@@ -7,7 +7,7 @@ data "cloudinit_config" "config" {
     content = templatefile(
       "cloud-init.yaml",
       {
-        docker-compose-config = filebase64("ingress/docker-compose.yml")
+        platform_apps = var.platform_apps
       }
     )
     content_type = "text/cloud-config"
