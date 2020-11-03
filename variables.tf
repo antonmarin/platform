@@ -19,6 +19,10 @@ variable "platform_apps" {
     ingress = {
       app_name = "ingress"
       dot_env_file_content = "IS_WEB_UI_ENABLED=false"
+    },
+    index = {
+      app_name = "index"
+      dot_env_file_content = ""
     }
   }
 }
