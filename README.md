@@ -6,6 +6,7 @@
 
 - `Application` is a separated folder in `platform_apps/` or `deploy_apps`
 - All applications files uploads to `/var/apps`
+- Every application with `docker-compose.yml` would be started with `docker-compose up -d`
 
 ### Getting started
 
