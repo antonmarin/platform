@@ -14,5 +14,5 @@ write_files:
     content: "${app.env_file_content}"
   %{ endfor ~}
 
-runcmd:
-  - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /var/apps/ingress:/var/apps/ingress -w /var/apps/ingress docker/compose:1.27.4 up -d
+#runcmd:
+#  - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /var/apps/ingress:/var/apps/ingress -w /var/apps/ingress docker/compose:1.27.4 up -d
