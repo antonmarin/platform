@@ -24,7 +24,7 @@ lint-terraform:
 	terraform validate
 	docker run --rm -v $(PWD):/data -t wata727/tflint
 lint-yaml:
-	docker run --rm -v "$(PWD):/app" -w /app sdesbure/yamllint sh -c "yamllint **/*.yml"
+	docker run --rm -v "$(PWD):/app" -w /app sdesbure/yamllint sh -c "yamllint platform_apps/**/*.yml"
 
 run: run-ingress #? start built in services locally
 run-ingress:
