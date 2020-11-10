@@ -16,5 +16,5 @@ write_files:
 runcmd:
   %{ for file in fileset("platform_apps/", "**/docker-compose.yml") ~}
    
-  - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /var/apps:/var/apps -w /var/apps docker/compose:1.27.4 -f ${file} up -d
+  - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /var/apps:/var/apps -w ${ dirname("/var/apps/${file}") ~} docker/compose:1.27.4 up -d
   %{ endfor ~}
