@@ -2,6 +2,11 @@
 
 ## Contributing
 
+### Concept
+
+- `Application` is a separated folder in `platform_apps/` or `deploy_apps`
+- All applications files uploads to `/var/apps`
+
 ### Getting started
 
 - `cp .env.dist .env`
@@ -9,7 +14,6 @@
 
 ## Usage
 
-- deploy
 - [routing](https://doc.traefik.io/traefik/routing/providers/docker/)
 - [middlewares](https://doc.traefik.io/traefik/middlewares/overview/)
 

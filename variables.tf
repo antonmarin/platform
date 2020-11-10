@@ -13,16 +13,16 @@ variable "ssh_keys" {
 }
 
 variable "platform_apps" {
-  type = map
-  description = "Map of platform apps .env files (app_name=file_content). Use HCL in Terraform CLoud"
+  type        = map
+  description = "Map of platform apps variables (app_name,env_file_content). Use HCL in Terraform CLoud"
   default = {
     ingress = {
-      app_name = "ingress"
-      dot_env_file_content = "IS_WEB_UI_ENABLED=false"
+      app_name         = "ingress"
+      env_file_content = "IS_WEB_UI_ENABLED=false"
     },
     index = {
-      app_name = "index"
-      dot_env_file_content = ""
-    }
+      app_name         = "index"
+      env_file_content = ""
+    },
   }
 }

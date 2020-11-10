@@ -8,5 +8,10 @@ write_files:
     content: ${filebase64("platform_apps/${file}")}
   %{ endfor ~}
 
+  %{ for app in platform_apps ~}
+  - path: /var/apps/${app.app_name}/.env
+    content: "${app.env_file_content}"
+  %{ endfor ~}
+
 runcmd:
   - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v /var/apps/ingress:/var/apps/ingress -w /var/apps/ingress docker/compose:1.27.4 up -d
