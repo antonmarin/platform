@@ -18,7 +18,7 @@ variable "platform_apps" {
   default = {
     ingress = {
       app_name         = "ingress"
-      env_file_content = "IS_WEB_UI_ENABLED=false"
+      env_file_content = "IS_WEB_UI_ENABLED=false\nLOG_LEVEL=ERROR"
     },
     index = {
       app_name         = "index"

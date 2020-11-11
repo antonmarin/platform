@@ -5,4 +5,14 @@ services:
   nginx:
     image: "nginx:latest"
     labels:
-      - "traefik.http.routers.index.rule=Host(`antonmarin.ru`)"
+      - "traefik.http.routers.index.rule=Host(`${INDEX_HOSTNAME}`)"
+    networks:
+      - ingress
+    environment:
+      - INDEX_HOSTNAME
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d
+
+networks:
+  ingress:
+    external: true

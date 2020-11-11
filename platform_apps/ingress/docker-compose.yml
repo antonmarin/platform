@@ -5,13 +5,23 @@ services:
   traefik:
     image: traefik:v2.2
     # Enables the web UI and tells Traefik to listen to docker
-    command: --api.insecure=${IS_WEB_UI_ENABLED} --providers.docker
+    command:
+      - --api.insecure=${IS_WEB_UI_ENABLED}
+      - --providers.docker
+      - --log.level=${LOG_LEVEL}
     ports:
       - 80:80
       - 443:443
       - 8080:8080
+    networks:
+      - ingress
     environment:
       - IS_WEB_UI_ENABLED
+      - LOG_LEVEL
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  ingress:
+    name: "ingress"
