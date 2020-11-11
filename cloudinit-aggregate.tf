@@ -4,12 +4,12 @@ data "cloudinit_config" "config" {
 
   part {
     filename = "config.cfg"
-    content = templatefile(
+    content = yamlencode(yamldecode(templatefile(
       "cloud-init.yaml",
       {
         platform_apps = var.platform_apps
       }
-    )
+    )))
     content_type = "text/cloud-config"
   }
 }
