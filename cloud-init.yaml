@@ -10,8 +10,8 @@ write_files:
   %{ for app in platform_apps ~}
   
   - path: /var/apps/${app.app_name}/.env
-    content: >
-    ${app.env_file_content}
+    encoding: b64
+    content: base64encode(${app.env_file_content})
   %{ endfor ~}
 
 runcmd:
