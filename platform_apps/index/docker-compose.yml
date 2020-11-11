@@ -12,6 +12,7 @@ services:
       - INDEX_HOSTNAME
     volumes:
       - ./conf.d:/etc/nginx/conf.d
+      - ./html:/usr/share/nginx/html
 
 networks:
   ingress:
