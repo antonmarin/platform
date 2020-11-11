@@ -20,4 +20,5 @@ runcmd:
   - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${dirname("/var/apps/${file}")~}:${dirname("/var/apps/${file}")~}" -w "${dirname("/var/apps/${file}")~}" docker/compose:1.27.4 up -d >> /var/log/runcmd.log
   %{ endfor ~}
 
-output: {all: '| tee -a /var/log/cloud-init-output.log'}
+output: 
+  all: '/var/log/cloud-init-output.log'
