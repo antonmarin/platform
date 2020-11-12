@@ -42,6 +42,7 @@ write_files:
 
 runcmd:
   - systemctl daemon-reload
+  - source /etc/profile.d/alias.sh
 
 output: 
   all: '/var/log/cloud-init.log'
