@@ -9,7 +9,12 @@ write_files:
     content: |
       export PATH=$PATH:/var/lib/toolbox
       export ROOTPATH=$ROOTPATH:/var/lib/toolbox
-  
+    append: true
+  - path: /etc/environment
+    content: |
+      PATH=$PATH:/var/lib/toolbox
+    append: true
+    
   - path: /var/lib/toolbox/docker-compose
     permissions: '0755'
     content: |
