@@ -39,7 +39,8 @@ write_files:
       [Service]
       Type=forking
       PIDFile=${dirname("/var/apps/${file}")~}/service.pid
-      WorkingDirectory=${dirname("/var/apps/${file}")~}"\n"
+      WorkingDirectory=${dirname("/var/apps/${file}")~}
+      
       ExecStart=docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD:$PWD" -w="$PWD" docker/compose:1.27.4 up -d
       ExecStop=/var/lib/toolbox/docker-compose down --remove-orphans
   %{ endfor ~}
