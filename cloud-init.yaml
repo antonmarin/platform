@@ -32,7 +32,7 @@ write_files:
   - path: /etc/systemd/system/${basename(dirname("${file}"))~}.service
     content: |
       [Unit]
-      Description=Start platform app: ${basename(dirname("${file}"))~}
+      Description=Platform app: ${basename(dirname("${file}"))~}
   
       [Service]
       Environment="HOME=${dirname("/var/apps/${file}")~}"
@@ -43,6 +43,10 @@ write_files:
 runcmd:
   - systemctl daemon-reload
   - source /etc/profile.d/alias.sh
-
+  - systemctl start docker-compose.service
+  %{ for file in fileset("platform_apps/", "**/docker-compose.yml") ~}
+  
+  - systemctl start ${basename(dirname("${file}"))~}.service
+  %{ endfor ~}
 output: 
   all: '/var/log/cloud-init.log'
