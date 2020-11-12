@@ -5,6 +5,17 @@ write_files:
     content: |
       alias docker-compose='/usr/bin/docker exec -w $(pwd) docker-compose docker-compose'
   
+  - path: /etc/profile.env
+    content: |
+      export PATH=$PATH:/var/lib/toolbox
+      export ROOTPATH=$ROOTPATH:/var/lib/toolbox
+  
+  - path: /var/lib/toolbox/docker-compose
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      /usr/bin/docker exec -w $(pwd) docker-compose docker-compose $@
+  
   %{ for file in fileset("platform_apps/", "**") ~}
   
   - path: /var/apps/${file}
@@ -48,5 +59,6 @@ runcmd:
   
   - systemctl start ${basename(dirname("${file}"))~}.service
   %{ endfor ~}
+
 output: 
   all: '/var/log/cloud-init.log'
