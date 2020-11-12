@@ -13,12 +13,21 @@ write_files:
     encoding: b64
     content: ${base64encode("${app.env_file_content}\n")}
   %{ endfor ~}
-
-runcmd:
   %{ for file in fileset("platform_apps/", "**/docker-compose.yml") ~}
-   
-  - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${dirname("/var/apps/${file}")~}:${dirname("/var/apps/${file}")~}" -w "${dirname("/var/apps/${file}")~}" docker/compose:1.27.4 up -d >> /var/log/runcmd.log
+  - path: /etc/systemd/system/${basename(dirname(${file}))~}.service
+    content: |
+      [Unit]
+      Description=Start platform app: ${basename(dirname(${file}))~}
+  
+      [Service]
+      Environment="HOME=${dirname("/var/apps/${file}")~}"
+      ExecStart=/usr/bin/docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${dirname("/var/apps/${file}")~}:${dirname("/var/apps/${file}")~}" -w "${dirname("/var/apps/${file}")~}" docker/compose:1.27.4 up -d
+      ExecStop=/usr/bin/docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${dirname("/var/apps/${file}")~}:${dirname("/var/apps/${file}")~}" -w "${dirname("/var/apps/${file}")~}" docker/compose:1.27.4 down --remove-orphans
   %{ endfor ~}
 
+
+runcmd:
+  - systemctl daemon-reload
+
 output: 
-  all: '/var/log/cloud-init-output.log'
+  all: '/var/log/cloud-init.log'
