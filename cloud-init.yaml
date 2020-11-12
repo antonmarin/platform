@@ -1,6 +1,10 @@
 #cloud-config
 
 write_files:
+  - path: /etc/profile.d/alias.sh
+    content: |
+      alias docker-compose='/usr/bin/docker exec -w $(pwd) docker-compose docker-compose'
+  
   %{ for file in fileset("platform_apps/", "**") ~}
   
   - path: /var/apps/${file}
@@ -13,6 +17,16 @@ write_files:
     encoding: b64
     content: ${base64encode("${app.env_file_content}\n")}
   %{ endfor ~}
+  
+  - path: /etc/systemd/system/docker-compose.service
+    content: |
+      [Unit]
+      Description=Start platform app: docker-compose
+
+      [Service]
+      Environment="HOME=/var/apps/docker-compose"
+      ExecStart=/usr/bin/docker run --name="docker-compose" --rm -v /var/run/docker.sock:/var/run/docker.sock -v "/var/apps:/var/apps" -w "/var/apps" docker/compose:1.27.4 sh -c "while true; do sleep 10000; done"
+      ExecStop=/usr/bin/docker stop docker-compose
   %{ for file in fileset("platform_apps/", "**/docker-compose.yml") ~}
   
   - path: /etc/systemd/system/${basename(dirname("${file}"))~}.service
@@ -22,10 +36,9 @@ write_files:
   
       [Service]
       Environment="HOME=${dirname("/var/apps/${file}")~}"
-      ExecStart=/usr/bin/docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${dirname("/var/apps/${file}")~}:${dirname("/var/apps/${file}")~}" -w "${dirname("/var/apps/${file}")~}" docker/compose:1.27.4 up -d
-      ExecStop=/usr/bin/docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${dirname("/var/apps/${file}")~}:${dirname("/var/apps/${file}")~}" -w "${dirname("/var/apps/${file}")~}" docker/compose:1.27.4 down --remove-orphans
+      ExecStart=docker-compose up -d
+      ExecStop=docker-compose down --remove-orphans
   %{ endfor ~}
-
 
 runcmd:
   - systemctl daemon-reload
