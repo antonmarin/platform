@@ -33,7 +33,7 @@ write_files:
   - path: /etc/systemd/system/${basename(dirname("${file}"))~}.service
     content: |
       [Unit]
-      Description=Platform app: ${basename(dirname("${file}"))~}
+      Description=Platform app: "${basename(dirname("${file}"))~}"
       After=docker-compose.service
       Requires=docker-compose.service
   
