@@ -41,7 +41,7 @@ write_files:
       PIDFile=${dirname("/var/apps/${file}")~}/service.pid
       WorkingDirectory=${dirname("/var/apps/${file}")~}
       
-      ExecStart=docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD:$PWD" -w="$PWD" docker/compose:1.27.4 up -d
+      ExecStart=docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${dirname("/var/apps/${file}")~}:${dirname("/var/apps/${file}")~}" -w="${dirname("/var/apps/${file}")~}" docker/compose:1.27.4 up -d
       ExecStop=/var/lib/toolbox/docker-compose down --remove-orphans
   %{ endfor ~}
 
