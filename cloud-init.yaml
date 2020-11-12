@@ -37,7 +37,8 @@ write_files:
       Description=Platform app: "${basename(dirname("${file}"))~}"
   
       [Service]
-      Type=forking
+      Type=oneshot
+      RemainAfterExit=yes
       Restart=always
       PIDFile=${dirname("/var/apps/${file}")~}/service.pid
       WorkingDirectory=${dirname("/var/apps/${file}")~}
