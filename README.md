@@ -13,6 +13,11 @@
 - `cp .env.dist .env`
 - `make run`
 
+### Notes
+
+- To get service logs `journalctl -u service-name.service`
+- To start/stop service `systemctl start/stop service-name.service`
+
 ## Usage
 
 - [routing](https://doc.traefik.io/traefik/routing/providers/docker/)
