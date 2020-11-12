@@ -35,7 +35,6 @@ write_files:
       [Unit]
       Description=Platform app: "${basename(dirname("${file}"))~}"
       After=docker-compose.service
-      Requires=docker-compose.service
   
       [Service]
       Environment="HOME=${dirname("/var/apps/${file}")~}"
