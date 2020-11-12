@@ -43,7 +43,6 @@ write_files:
 
 runcmd:
   - systemctl daemon-reload
-  - source /etc/profile.d/alias.sh
   - systemctl start docker-compose.service
   %{ for file in fileset("platform_apps/", "**/docker-compose.yml") ~}
   
