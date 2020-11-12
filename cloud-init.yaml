@@ -14,7 +14,7 @@ write_files:
     content: ${base64encode("${app.env_file_content}\n")}
   %{ endfor ~}
   %{ for file in fileset("platform_apps/", "**/docker-compose.yml") ~}
-  - path: /etc/systemd/system/${basename(dirname("${file}"))~}.service
+- path: /etc/systemd/system/${basename(dirname("${file}"))~}.service
     content: |
       [Unit]
       Description=Start platform app: ${basename(dirname("${file}"))~}
