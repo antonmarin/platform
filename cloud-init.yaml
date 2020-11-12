@@ -38,6 +38,7 @@ write_files:
   
       [Service]
       Type=forking
+      Restart=always
       PIDFile=${dirname("/var/apps/${file}")~}/service.pid
       WorkingDirectory=${dirname("/var/apps/${file}")~}
       
