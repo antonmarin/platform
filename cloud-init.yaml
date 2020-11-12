@@ -25,6 +25,7 @@ write_files:
       Description=Start platform app: docker-compose
 
       [Service]
+      Type=forking
       Environment="HOME=/var/apps/docker-compose"
       ExecStart=/usr/bin/docker run --name="docker-compose" --rm -v /var/run/docker.sock:/var/run/docker.sock -v "/var/apps:/var/apps" -w "/var/apps" docker/compose:1.27.4 sh -c "while true; do sleep 10000; done"
       ExecStop=/usr/bin/docker stop docker-compose
@@ -34,17 +35,18 @@ write_files:
     content: |
       [Unit]
       Description=Platform app: "${basename(dirname("${file}"))~}"
-      After=docker-compose.service
   
       [Service]
+      Type=forking
+      PIDFile=${dirname("/var/apps/${file}")~}/service.pid
+      WorkingDirectory=${dirname("/var/apps/${file}")~}
       Environment="HOME=${dirname("/var/apps/${file}")~}"
-      ExecStart=/var/lib/toolbox/docker-compose up -d
+      ExecStart=docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD:$PWD" -w="$PWD" docker/compose:1.27.4 up -d
       ExecStop=/var/lib/toolbox/docker-compose down --remove-orphans
   %{ endfor ~}
 
 runcmd:
   - systemctl daemon-reload
-  - systemctl start docker-compose.service
   %{ for file in fileset("platform_apps/", "**/docker-compose.yml") ~}
   
   - systemctl start ${basename(dirname("${file}"))~}.service
