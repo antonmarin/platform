@@ -4,9 +4,10 @@
 
 ### Concept
 
-- `Application` is a separated folder in `platform_apps/` or `deploy_apps`
+- `Application` is a separated folder in `platform_apps/` or `deploy_apps/`
 - All applications files uploads to `/var/apps`
-- Every application with `docker-compose.yml` would be started with `docker-compose up -d`
+- Every application with `docker-compose.yml` would be started with `docker-compose up -d`.
+Look at `cloud-init.yaml` for more info.
 
 ### Getting started
 
