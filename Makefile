@@ -30,8 +30,8 @@ run: #? start built in services locally
 	cd platform_apps/ingress && docker-compose up -d
 	cd platform_apps/index && docker-compose up -d
 stop:
-	cd platform_apps/ingress && docker-compose down --remove-orphans
 	cd platform_apps/index && docker-compose down --remove-orphans
+	cd platform_apps/ingress && docker-compose down --remove-orphans
 
 ssh:
 	ssh antonmarin@$(PLATFORM_SERVER_IP)
