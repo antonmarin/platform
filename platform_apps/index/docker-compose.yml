@@ -5,7 +5,7 @@ services:
   nginx:
     image: "nginx:latest"
     labels:
-      - "traefik.http.routers.index.rule=Host(`${INDEX_HOSTNAME}`)"
+      - "traefik.http.routers.index.rule=Host(`${INDEX_HOSTNAME}`) && Path(`/`)"
     networks:
       - ingress
     environment:
