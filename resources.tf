@@ -31,6 +31,9 @@ resource "google_compute_instance" "vm_instance" {
     }
   }
 
+  metadata = {
+    user-data = data.cloudinit_config.config.rendered
+  }
 }
 
 output "ip" {
