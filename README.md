@@ -21,9 +21,12 @@ Look at `cloud-init.yaml` for more info.
 
 ## Usage
 
-- [routing](https://doc.traefik.io/traefik/routing/providers/docker/)
-- [middlewares](https://doc.traefik.io/traefik/middlewares/overview/)
-- use `ingress` external network to enable ingress routing to your container.
+- add directory with docker-compose.yml to /platform_apps
+  - use `ingress` external network to enable ingress routing to your container.
+  - to set up ingress:
+    - [routing](https://doc.traefik.io/traefik/routing/providers/docker/)
+    - [middlewares](https://doc.traefik.io/traefik/middlewares/overview/)
+- add env variables to terraform
 
 ### Examples
 
