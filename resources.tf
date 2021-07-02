@@ -20,7 +20,7 @@ resource "google_compute_instance" "vm_instance" {
 
   boot_disk {
     initialize_params {
-      image = "cos-cloud/cos-81-lts"
+      image = "cos-cloud/cos-stable"
     }
   }
 
