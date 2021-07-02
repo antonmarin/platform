@@ -6,7 +6,7 @@ services:
     image: "antonmarin/want2watch:latest"
     labels:
       - "traefik.http.routers.want2watch.rule=Host(`${WANT2WATCH_HOSTNAME}`) && PathPrefix(`${WANT2WATCH_PATH}`)"
-      - "traefik.http.middlewares.want2watch-stripprefix.stripprefix.prefixes=/want2watch,/want2watch/"
+      - "traefik.http.middlewares.want2watch-stripprefix.stripprefix.prefixes=${WANT2WATCH_PATH},${WANT2WATCH_PATH}/"
       - "traefik.http.routers.want2watch.middlewares=want2watch-stripprefix"
     networks:
       - ingress
