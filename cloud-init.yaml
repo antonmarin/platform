@@ -47,5 +47,8 @@ write_files:
       ExecStop=/var/lib/toolbox/docker-compose down --remove-orphans
   %{ endfor ~}
 
+runcmd:
+  - systemctl daemon-reload
+
 output: 
   all: '/var/log/cloud-init.log'
