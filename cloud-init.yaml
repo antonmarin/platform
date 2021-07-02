@@ -49,6 +49,10 @@ write_files:
 
 runcmd:
   - systemctl daemon-reload
+  %{ for file in fileset("platform_apps/", "**/docker-compose.yml") ~}
+
+  - systemctl start ${basename(dirname("${file}"))~}.service
+  %{ endfor ~}
 
 output: 
   all: '/var/log/cloud-init.log'
