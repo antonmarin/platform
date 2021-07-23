@@ -15,7 +15,7 @@ resource "google_compute_project_metadata" "default" {
 
 resource "google_compute_instance" "vm_instance" {
   name         = "terraform-instance"
-  machine_type = "f1-micro"
+  machine_type = "e2-micro"
   tags         = ["http-server", "https-server", "ssh-server", "traefik-ui"]
 
   boot_disk {
