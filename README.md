@@ -38,9 +38,9 @@ services:
     image: "nginx:latest"
     labels:
       - "traefik.http.routers.index.rule=Host(`${INDEX_HOSTNAME}`)"
-      - "traefik.http.routers.myrouter.rule=PathPrefix(`/test`)" \
-      - "traefik.http.routers.myrouter.middlewares=myrouter-stripprefix" \
-      - "traefik.http.middlewares.myrouter-stripprefix.stripprefix.prefixes=/test,/test/" \
+      - "traefik.http.routers.index.rule=PathPrefix(`/test`)" \
+      - "traefik.http.routers.index.middlewares=myrouter-stripprefix" \
+      - "traefik.http.middlewares.index-stripprefix.stripprefix.prefixes=/test,/test/" \
 
     networks:
       - ingress
