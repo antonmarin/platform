@@ -8,8 +8,8 @@ services:
       - "traefik.http.routers.want2watch.rule=Host(`${WANT2WATCH_HOSTNAME}`) && PathPrefix(`${WANT2WATCH_PATH}`)"
       - "traefik.http.middlewares.want2watch-stripprefix.stripprefix.prefixes=${WANT2WATCH_PATH},${WANT2WATCH_PATH}/"
       - "traefik.http.routers.want2watch.middlewares=want2watch-stripprefix"
-      - "traefik.http.routers.index.tls=true"
-      - "traefik.http.routers.index.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.want2watch.tls=true"
+      - "traefik.http.routers.want2watch.tls.certresolver=letsencrypt"
     networks:
       - ingress
     environment:
