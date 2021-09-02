@@ -34,6 +34,7 @@ resource "google_compute_instance" "vm_instance" {
   metadata = {
     user-data = data.cloudinit_config.config.rendered
   }
+  metadata_startup_script = "echo '${sha256(data.cloudinit_config.config.rendered)}' > /var/log/cloud-init-config.log"
 }
 
 output "ip" {
