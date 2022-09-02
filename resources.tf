@@ -1,5 +1,13 @@
+terraform {
+  required_providers {
+    google = {
+      source  = "registry.terraform.io/hashicorp/google"
+      version = "~> 3.4"
+    }
+  }
+}
+
 provider "google" {
-  version     = "~> 3.4"
   credentials = var.google_service_account
 
   project = var.gcp_project

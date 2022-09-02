@@ -1,9 +1,5 @@
 terraform {
-  backend "remote" {
-    organization = "antonmarin"
-
-    workspaces {
-      name = "platform"
-    }
+  backend "local" {
+    path = "state"
   }
 }
