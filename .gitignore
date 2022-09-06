@@ -3,5 +3,8 @@
 .terraform/
 terraform.tfstate*
 terraform.tfvars
+.state.lock.info
+state
+state.backup
 # IDE
 /*.iml
