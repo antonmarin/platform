@@ -18,6 +18,11 @@ services:
       - GLIDE_PASS
       - WANT2WATCH_HOSTNAME
       - WANT2WATCH_PATH
+      - APP_GOOGLE_PROJECT_ID
+      - APP_GOOGLE_PRIVATE_KEY_ID
+      - APP_GOOGLE_PRIVATE_KEY
+      - APP_GOOGLE_CLIENT_ID
+      - APP_GOOGLE_CLIENT_NAME
     command: [ "php", "-S", "0.0.0.0:9000", "-t", "/app/public" ]
 
 networks:
