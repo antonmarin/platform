@@ -2,7 +2,7 @@
 version: "3.7"
 
 services:
-  php:
+  app:
     image: "antonmarin/want2watch:latest"
     labels:
       - "traefik.http.routers.want2watch.rule=Host(`${WANT2WATCH_HOSTNAME}`) && PathPrefix(`${WANT2WATCH_PATH}`)"
