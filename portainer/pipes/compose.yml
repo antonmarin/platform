@@ -1,0 +1,20 @@
+---
+services:
+  pipes:
+    container_name: pipes
+    image: antonmarin/autoget:latest
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - TZ=Europe/Moscow
+      - LOGGING_DOMAIN_ROOT_LEVEL=DEBUG
+      - PLEX_TOKEN=${PLEX_TOKEN}
+      - TRANSMISSION_BASEPATH=${TRANSMISSION_BASEPATH}
+      - TORRENTS_FEED=${TORRENTS_FEED}
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          memory: 100M
+        limits:
+          memory: 400M
