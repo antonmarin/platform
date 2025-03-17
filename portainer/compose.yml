@@ -9,7 +9,7 @@ services:
     command: --admin-password '${ADMIN_PASS}'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-#      - ./:/data
+      - portainer_app:/data
     deploy:
       resources:
         reservations:
@@ -17,4 +17,5 @@ services:
         limits:
           memory: 1G
 
-#volumes: 
+volumes:
+  portainer_app:
