@@ -22,9 +22,9 @@ echo "Starting portainer from $compose"
 if command -v docker-compose >/dev/null 2>&1; then
     # Run docker-compose up
     echo "Running 'docker-compose up'"
-    docker-compose --progress quiet -f "$compose" up -d --wait
+    docker-compose -f "$compose" up -d
 else
     # Fall back to docker compose
     echo "Running 'docker compose up'"
-    docker compose --progress quiet -f "$compose" up -d --wait
+    docker compose -f "$compose" up -d
 fi
