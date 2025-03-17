@@ -23,8 +23,15 @@ lint: lint-terraform lint-yaml #? pre-run validations
 lint-terraform:
 	terraform validate
 	docker run --rm -v $(PWD):/data -t wata727/tflint
-lint-yaml:
+lint-yaml: # https://yamllint.readthedocs.io/en/latest/rules.html
 	docker run --rm -v "$(PWD):/app" -w /app sdesbure/yamllint sh -c "yamllint platform_apps/**/*.yml"
+	docker run --rm -v $(PWD):/apps -w /apps sdesbure/yamllint yamllint /portainer/
+
+portainer-hash-password: #? hash admin password for portainer. used with --admin-password. in /run/secrets/portainer plain is used
+	@read -p "Enter new password: " password; \
+	htpasswd -nb -B admin $$password | cut -d ":" -f 2
+portainer-reset-password:
+	docker run --rm -v "$(PWD)/portainer:/data" portainer/helper-reset-password
 
 run: #? start built in services locally
 	cd platform_apps/ingress && docker compose up -d
