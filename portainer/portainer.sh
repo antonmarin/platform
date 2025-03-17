@@ -15,7 +15,7 @@
 #rm "$volumes/media_video/_data"
 #ln -s "$storage/Video" "$volumes/media_video/_data"
 
-currentFilePath="$(dirname $0)"
+currentFilePath="$(realpath $(dirname $0))"
 compose="$currentFilePath/compose.yml"
 echo "Starting portainer from $compose"
 # Check if docker-compose exists and is executable
