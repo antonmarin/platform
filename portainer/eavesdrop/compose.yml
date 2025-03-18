@@ -7,6 +7,13 @@ services:
       - eavesdrop_app:/app/storage
     environment:
       - TZ=Europe/Moscow
+      - APP_ID=${APP_ID}
+      - APP_HASH=${APP_HASH}
+      - EAVESDROP_PHONE=${EAVESDROP_PHONE}
+      - EAVESDROP_IGNORED_CHATS=${EAVESDROP_IGNORED_CHATS}
+      - EAVESDROP_DISPATCHER_CHATS=${EAVESDROP_DISPATCHER_CHATS}
+      - BOT_TOKEN=${BOT_TOKEN}
+      - AUTHORS=${AUTHORS}
     restart: unless-stopped
     deploy:
       resources:
