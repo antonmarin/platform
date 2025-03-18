@@ -1,0 +1,27 @@
+services:
+  kavita:
+    image: lscr.io/linuxserver/kavita:latest
+    container_name: kavita
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Moscow
+    volumes:
+      - kavita_app:/config
+      - media_manga:/manga
+      - media_books:/books
+    ports:
+      - 32500:5000
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          memory: 150M
+        limits:
+          memory: 350M
+volumes:
+  kavita_app:
+  media_manga:
+    external: true
+  media_books:
+    external: true
