@@ -5,7 +5,6 @@ services:
     image: docker.io/antonmarin/message-dispatcher:latest
     volumes:
       - eavesdrop_app:/app/storage
-    env_file: [stack.env]
     environment:
       - TZ=Europe/Moscow
     restart: unless-stopped
