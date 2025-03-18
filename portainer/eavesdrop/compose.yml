@@ -1,0 +1,20 @@
+---
+services:
+  eavesdrop:
+    container_name: eavesdrop
+    image: docker.io/antonmarin/message-dispatcher:latest
+    volumes:
+      - eavesdrop_app:/app/storage
+    env_file: [stack.env]
+    environment:
+      - TZ=Europe/Moscow
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          memory: 20M
+        limits:
+          memory: 300M  
+
+volumes: 
+  eavesdrop_app:
