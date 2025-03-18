@@ -6,11 +6,9 @@ services:
     restart: always
     ports:
       - "9000:9000"
-    command: --admin-password '${ADMIN_PASS}'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_app:/data
-    env_file: [.env]
     deploy:
       resources:
         reservations:
