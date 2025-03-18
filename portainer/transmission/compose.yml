@@ -1,0 +1,35 @@
+---
+services:
+  transmission:
+    image: linuxserver/transmission:amd64-4.0.5
+    container_name: transmission
+    environment:
+      - PUID=${PUID} # transmission
+      - PGID=${PGID} # storage.write
+      - TZ=Europe/Moscow
+      - TRANSMISSION_WEB_HOME=/config/web/transmissionic/web #optional. UI type
+      - PEERPORT=51413 #optional. same as open port. map on router
+      - CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt #not a ssl problem
+    volumes:
+      - transmission_app:/config
+      - media_video:/video
+      - /volume1/Storage/Downloads:/downloads
+    ports:
+      - "9091:9091"
+      - "51413:51413/tcp"
+      - "51413:51413/udp"
+    restart: unless-stopped
+    ulimits:
+      nofile: 1024
+    #    network_mode: host
+    deploy:
+      resources:
+        reservations:
+          memory: 200M
+        limits:
+          memory: 1000M
+
+volumes: 
+  transmission_app:
+  media_video:
+    external: true
