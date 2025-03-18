@@ -11,7 +11,7 @@ services:
           memory: 512M
     image: registry.gitflic.ru/project/maks1ms/gitflic-runner/gitflic-runner:3.4.1
     volumes:
-      - /volume1/docker/apps/gitflic-runner/config/siteb:/root/gitflic-runner/config
+      - gitflic_runner_siteb:/root/gitflic-runner/config
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       REG_URL: https://coordinator.gitflic.ru/-/runner/registration
