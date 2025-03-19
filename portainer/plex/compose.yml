@@ -1,0 +1,40 @@
+---
+services:
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    devices:
+      - /dev/dri:/dev/dri
+    environment:
+      - PUID=${PUID} # plex
+      - PGID=${PGID} # storage.rw
+      - TZ=Europe/Moscow
+      - VERSION=public
+      - PLEX_CLAIM='${PLEX_CLAIM}' #optional
+    volumes:
+      - plex_app:/config
+      - media_video:/video
+      - media_audio:/audio
+    ports:
+      - "32400:32400" # access to the Plex Media Server
+      - "1900:1900/udp" # access to the Plex DLNA Server
+      #      - "5353:5353/udp" # older Bonjour/Avahi network discovery
+      #      - "8324:8324" # controlling Plex for Roku via Plex Companion
+      - "32410:32410/udp" # current GDM network discovery
+      - "32412:32412/udp" # current GDM network discovery
+      - "32413:32413/udp" # current GDM network discovery
+      - "32414:32414/udp" # current GDM network discovery
+      - "32469:32469" # access to the Plex DLNA Server
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          memory: 100M
+        limits:
+          memory: 1G
+volumes:
+  plex_app:
+  media_audio:
+    external: true
+  media_video:
+    external: true
