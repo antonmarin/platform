@@ -1,21 +1,9 @@
 #!/usr/bin/env sh
 
-#volumes="/volume1/@docker/volumes"
-#storage="/volume1/Storage"
-#
-#rm "$volumes/media_manga/_data"
-#ln -s "$storage/Manga" "$volumes/media_manga/_data"
-#
-#rm "$volumes/media_books/_data"
-#ln -s "$storage/Books" "$volumes/media_books/_data"
-#
-#rm "$volumes/media_audio/_data"
-#ln -s "$storage/Audio" "$volumes/media_audio/_data"
-#
-#rm "$volumes/media_video/_data"
-#ln -s "$storage/Video" "$volumes/media_video/_data"
+# do not rename, it installs by name. see nas every-hour.sh
 
 currentFilePath="$(realpath $(dirname $0))"
+
 compose="$currentFilePath/compose.yml"
 echo "Starting portainer from $compose"
 # Check if docker-compose exists and is executable

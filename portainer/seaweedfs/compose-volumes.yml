@@ -1,0 +1,21 @@
+---
+version: '3.9'
+
+services:
+  volume1: # real storage
+    image: chrislusf/seaweedfs
+    ports:
+      - 8080:8080 # volume api
+      - 18080:18080 # grpc
+      - 9325:9325 # metrics
+    command: 'volume -mserver="master:9333" -ip.bind=0.0.0.0 -metricsPort=9325 -port=8080 -dataCenter=home -rack=homeserver -max=0 -dir=/data'
+    volumes:
+      - volume1:/data
+    networks:
+      - seaweed
+
+networks:
+  seaweed:
+
+volumes:
+  volume1:
