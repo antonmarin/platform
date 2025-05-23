@@ -14,3 +14,4 @@ services:
 
 networks:
   seaweed:
+    external: true

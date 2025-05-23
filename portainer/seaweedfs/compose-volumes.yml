@@ -16,6 +16,7 @@ services:
 
 networks:
   seaweed:
+    external: true
 
 volumes:
   volume1:
