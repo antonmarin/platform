@@ -1,0 +1,38 @@
+---
+version: "3.9"
+# https://github.com/brotandgames/ciao#ciao
+services:
+  app:
+    image: brotandgames/ciao:latest
+    container_name: ciao
+    environment:
+#      - PUID=${PUID} # plex
+#      - PGID=${PGID} # storage.rw
+      - TIME_ZONE=Moscow
+      - BASIC_AUTH_USERNAME=${AUTH_USERNAME}
+      - BASIC_AUTH_PASSWORD=${AUTH_PASSWORD}
+      - PROMETHEUS_ENABLED=true
+      - PROMETHEUS_BASIC_AUTH_USERNAME=${AUTH_USERNAME}
+      - PROMETHEUS_BASIC_AUTH_PASSWORD=${AUTH_PASSWORD}
+      - SMTP_ADDRESS=${SMTP_ADDRESS}
+      - SMTP_EMAIL_FROM=${SMTP_FROM}
+      - SMTP_EMAIL_TO=${SMTP_TO}
+      - SMTP_PORT=587
+      - SMTP_DOMAIN=${SMTP_DOMAIN}
+      - SMTP_AUTHENTICATION=plain
+      - SMTP_ENABLE_STARTTLS_AUTO=true
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+    volumes:
+      - app:/app/db/sqlite
+    ports:
+      - "8090:3000"
+    restart: unless-stopped
+#    deploy:
+#      resources:
+#        reservations:
+#          memory: 100M
+#        limits:
+#          memory: 1G
+volumes:
+  app:
