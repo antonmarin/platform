@@ -4,10 +4,8 @@ version: "3.9"
 services:
   app:
     image: brotandgames/ciao:latest
-    container_name: ciao
+    container_name: ciao_siteb_it
     environment:
-#      - PUID=${PUID} # plex
-#      - PGID=${PGID} # storage.rw
       - TIME_ZONE=Moscow
       - BASIC_AUTH_USERNAME=${AUTH_USERNAME}
       - BASIC_AUTH_PASSWORD=${AUTH_PASSWORD}
@@ -17,14 +15,15 @@ services:
       - SMTP_ADDRESS=${SMTP_ADDRESS}
       - SMTP_EMAIL_FROM=${SMTP_FROM}
       - SMTP_EMAIL_TO=${SMTP_TO}
-      - SMTP_PORT=587
       - SMTP_DOMAIN=${SMTP_DOMAIN}
+      - SMTP_PORT=587
       - SMTP_AUTHENTICATION=plain
       - SMTP_ENABLE_STARTTLS_AUTO=true
       - SMTP_USERNAME=${SMTP_USERNAME}
       - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - CIAO_LOG_LEVEL=INFO
     volumes:
-      - app:/app/db/sqlite
+      - siteb_it:/app/db/sqlite
     ports:
       - "8090:3000"
     restart: unless-stopped
@@ -35,4 +34,4 @@ services:
 #        limits:
 #          memory: 1G
 volumes:
-  app:
+  siteb_it:
