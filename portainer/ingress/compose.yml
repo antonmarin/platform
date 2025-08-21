@@ -34,10 +34,12 @@ services:
   index:
     build: index/.
     pull_policy: build
+    labels:
+      - "traefik.http.routers.index.rule=Path(`/`)"
+      - "traefik.http.routers.index.tls=true"
+      - "traefik.http.routers.index.tls.certresolver=letsencrypt"
     networks:
       - ingress
-    environment:
-      - INDEX_HOSTNAME
 networks:
   ingress:
     name: "ingress"
