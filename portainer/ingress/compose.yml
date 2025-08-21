@@ -5,8 +5,8 @@ services:
   ingress:
     image: traefik:v2.2
     command:
-      # Tells Traefik to listen to config file
-      - --providers.file.filename=/etc/traefik/services.yml
+      # Tells Traefik to listen to docker
+      - --providers.docker
       # Enables the web UI
       - --api.insecure=${IS_WEB_UI_ENABLED}
       - --log.level=${LOG_LEVEL}
@@ -28,9 +28,9 @@ services:
       - LOG_LEVEL
       - ACME_EMAIL
       - ACME_CASERVER
-    configs:
-      - source: services
-        target: /etc/traefik/services.yml
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
   index:
     build: index/.
     pull_policy: build
@@ -38,22 +38,6 @@ services:
       - ingress
     environment:
       - INDEX_HOSTNAME
-
-configs:
-  services:
-    # https://doc.traefik.io/traefik/reference/dynamic-configuration/file/
-    content: |
-      http:
-        routers:
-          index:
-            rule: "Host(`${INDEX_HOSTNAME}`) && Path(`/`)"
-            service: index
-            tls.certresolver: letsencrypt
-        services:
-          index:
-            loadBalancer:
-              servers:
-                - url: "http://index"
-
 networks:
   ingress:
+    name: "ingress"
