@@ -1,0 +1,19 @@
+---
+version: "3.9"
+
+services:
+  index:
+    build: .
+    pull_policy: build
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.index.rule=Path(`/`)"
+    networks:
+      - ingress
+    environment:
+      # https://doc.traefik.io/traefik/reference/static-configuration/env/
+      - INDEX_HOSTNAME
+
+networks:
+  ingress:
+    name: "ingress"

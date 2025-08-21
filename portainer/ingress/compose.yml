@@ -3,10 +3,10 @@ version: "3.9"
 
 services:
   ingress:
-    image: traefik:v2.2
+    image: traefik:3.5
     command:
       # Tells Traefik to listen to docker
-      - --providers.docker
+      - --providers.docker.network=ingress
       # Enables the web UI
       - --api.insecure=${IS_WEB_UI_ENABLED}
       - --log.level=${LOG_LEVEL}
@@ -16,10 +16,14 @@ services:
       - --certificatesresolvers.letsencrypt.acme.storage=/acme.json
       - --certificatesresolvers.letsencrypt.acme.caserver=${ACME_CASERVER}
       - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      - --accesslog=true
+#      - --tracing=true
     ports:
       - "80:80"
       - "443:443"
       - "8080:8080"
+    labels:
+      - "traefik.enable=false"
     networks:
       - ingress
     environment:
@@ -31,18 +35,6 @@ services:
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
-  index:
-    build: index/.
-    pull_policy: build
-    labels:
-      - "traefik.http.routers.index.rule=Host(`${INDEX_HOSTNAME}`) && Path(`/`)"
-      - "traefik.http.routers.index.tls=true"
-      - "traefik.http.routers.index.tls.certresolver=letsencrypt"
-    networks:
-      - ingress
-    environment:
-      # https://doc.traefik.io/traefik/reference/static-configuration/env/
-      - INDEX_HOSTNAME
 
 networks:
   ingress:
