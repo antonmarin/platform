@@ -1,58 +1,9 @@
 #cloud-config
 
 write_files:
-  %{ for file in fileset("platform_apps/", "**") ~}
-  
-  - path: /var/apps/${file}
-    encoding: b64
-    content: ${filebase64("platform_apps/${file}")}
-  %{ endfor ~}
-  %{ for app in platform_apps ~}
-  
-  - path: /var/apps/${app.app_name}/.env
-    encoding: b64
-    content: ${base64encode("${app.env_file_content}\n")}
-  %{ endfor ~}
-
-  - path: /var/lib/toolbox/docker-compose
-    permissions: '0755'
+  - path: /etc/docker/daemon.json
     content: |
-      #!/bin/bash
-      /usr/bin/docker exec -w $(pwd) docker-compose docker-compose $@
-  - path: /etc/systemd/system/docker-compose.service
-    content: |
-      [Unit]
-      Description=Start platform app: docker-compose
-
-      [Service]
-      Type=forking
-      Environment="HOME=/var/apps/docker-compose"
-      ExecStart=/usr/bin/docker run --name="docker-compose" --rm -v /var/run/docker.sock:/var/run/docker.sock -v "/var/apps:/var/apps" -w "/var/apps" docker/compose:1.27.4 sh -c "while true; do sleep 10000; done"
-      ExecStop=/usr/bin/docker stop docker-compose
-  %{ for file in fileset("platform_apps/", "**/docker-compose.yml") ~}
-  
-  - path: /etc/systemd/system/${basename(dirname("${file}"))~}.service
-    content: |
-      [Unit]
-      Description=Platform app: "${basename(dirname("${file}"))~}"
-  
-      [Service]
-      Type=simple
-      RemainAfterExit=yes
-      Restart=always
-      PIDFile=${dirname("/var/apps/${file}")~}/service.pid
-      WorkingDirectory=${dirname("/var/apps/${file}")~}
-      
-      ExecStart=docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "${dirname("/var/apps/${file}")~}:${dirname("/var/apps/${file}")~}" -w="${dirname("/var/apps/${file}")~}" docker/compose:1.27.4 up -d
-      ExecStop=/var/lib/toolbox/docker-compose down --remove-orphans
-  %{ endfor ~}
-
-runcmd:
-  - systemctl daemon-reload
-  %{ for file in fileset("platform_apps/", "**/docker-compose.yml") ~}
-
-  - systemctl start ${basename(dirname("${file}"))~}.service
-  %{ endfor ~}
+      { "registry-mirrors" : [ "https://dockerhub.timeweb.cloud" ] }
 
 output: 
   all: '/var/log/cloud-init.log'
