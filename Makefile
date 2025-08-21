@@ -42,3 +42,9 @@ stop:
 
 ssh:
 	ssh -o StrictHostKeyChecking=no antonmarin@$(PLATFORM_SERVER_IP)
+
+fwd-traefik:
+	ssh -NL 8080:localhost:8080 root@$(PLATFORM_SERVER_IP)
+
+fwd-portainer:
+	ssh -NL 9001:$(PLATFORM_SERVER_IP):9001 root@$(PLATFORM_SERVER_IP)
