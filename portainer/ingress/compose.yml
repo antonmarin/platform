@@ -13,7 +13,7 @@ services:
       - --entrypoints.http.address=:80
       - --entrypoints.https.address=:443
       - --certificatesResolvers.letsencrypt.acme.email=${ACME_EMAIL}
-      - --certificatesResolvers.letsencrypt.acme.storage=/etc/traefik/acme.json
+      - --certificatesResolvers.letsencrypt.acme.storage=/etc/acme/acme.json
       # Default: "https://acme-v02.api.letsencrypt.org/directory"
       - --certificatesResolvers.letsencrypt.acme.caserver=${ACME_CASERVER}
       - --certificatesResolvers.letsencrypt.acme.tlsChallenge=true
@@ -36,7 +36,11 @@ services:
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
+      - acme:/etc/acme
 
 networks:
   ingress:
     name: "ingress"
+
+volumes:
+  acme:
