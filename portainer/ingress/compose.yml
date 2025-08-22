@@ -12,10 +12,11 @@ services:
       - --log.level=${LOG_LEVEL}
       - --entrypoints.http.address=:80
       - --entrypoints.https.address=:443
-      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}
-      - --certificatesresolvers.letsencrypt.acme.storage=/acme.json
-      - --certificatesresolvers.letsencrypt.acme.caserver=${ACME_CASERVER}
-      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      - --certificatesResolvers.letsencrypt.acme.email=${ACME_EMAIL}
+      - --certificatesResolvers.letsencrypt.acme.storage=/acme.json
+      # Default: "https://acme-v02.api.letsencrypt.org/directory"
+      - --certificatesResolvers.letsencrypt.acme.caserver=${ACME_CASERVER}
+      - --certificatesResolvers.letsencrypt.acme.tlsChallenge=true
       - --accesslog=true
 #      - --tracing=true
     ports:
