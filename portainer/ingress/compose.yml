@@ -13,7 +13,7 @@ services:
       - --entrypoints.http.address=:80
       - --entrypoints.https.address=:443
       - --certificatesResolvers.letsencrypt.acme.email=${ACME_EMAIL}
-      - --certificatesResolvers.letsencrypt.acme.storage=/acme.json
+      - --certificatesResolvers.letsencrypt.acme.storage=/etc/traefik/acme.json
       # Default: "https://acme-v02.api.letsencrypt.org/directory"
       - --certificatesResolvers.letsencrypt.acme.caserver=${ACME_CASERVER}
       - --certificatesResolvers.letsencrypt.acme.tlsChallenge=true
