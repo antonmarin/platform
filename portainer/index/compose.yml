@@ -7,9 +7,10 @@ services:
     pull_policy: build
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.index.rule=HostRegexp(`${INDEX_HOSTNAME}`) && Path(`/`)"
+      - "traefik.http.routers.index.rule=Host(`${ROUTE_HOSTNAME}`) && Path(`/`)"
       - "traefik.http.routers.index.tls=${IS_TLS_ENABLED}"
       - "traefik.http.routers.index.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.index.tls.domains[0].main=${ACME_HOSTNAME}"
     networks:
       - ingress
     environment:
