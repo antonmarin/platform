@@ -26,9 +26,9 @@ services:
       - "traefik.http.routers.vaultwarden.tls.domains[0].sans[0]=${ACME_HOSTNAME}"
     volumes:
       - data:/data/
-    ports:
-      - "80"
-      - "443"
+#    ports:
+#      - "80"
+#      - "443"
 #    depends_on:
 #      database:
 #        condition: service_healthy
