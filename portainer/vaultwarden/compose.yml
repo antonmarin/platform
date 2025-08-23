@@ -62,7 +62,6 @@ services:
 volumes:
   data:
 #  database:
-#  media_audio:
-#    external: true
-#  media_video:
-#    external: true
+networks:
+  ingress:
+    name: "ingress"
