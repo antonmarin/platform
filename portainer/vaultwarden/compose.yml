@@ -29,9 +29,9 @@ services:
     ports:
       - "80"
       - "443"
-    depends_on:
-      database:
-        condition: service_healthy
+#    depends_on:
+#      database:
+#        condition: service_healthy
 #  database:
 #    deploy:
 #      resources:
