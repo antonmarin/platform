@@ -19,11 +19,11 @@ services:
       SIGNUPS_ALLOWED: "true"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.index.rule=Host(`${ROUTE_HOSTNAME}`) && Path(`/`)"
-      - "traefik.http.routers.index.tls=${IS_TLS_ENABLED}"
-      - "traefik.http.routers.index.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.index.tls.domains[0].main=${ROUTE_HOSTNAME}"
-      - "traefik.http.routers.index.tls.domains[0].sans[0]=${ACME_HOSTNAME}"
+      - "traefik.http.routers.vaultwarden.rule=Host(`${ROUTE_HOSTNAME}`) && Path(`/`)"
+      - "traefik.http.routers.vaultwarden.tls=${IS_TLS_ENABLED}"
+      - "traefik.http.routers.vaultwarden.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.vaultwarden.tls.domains[0].main=${ROUTE_HOSTNAME}"
+      - "traefik.http.routers.vaultwarden.tls.domains[0].sans[0]=${ACME_HOSTNAME}"
     volumes:
       - data:/data/
     ports:
