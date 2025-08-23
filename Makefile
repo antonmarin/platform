@@ -41,7 +41,7 @@ stop:
 	cd platform_apps/ingress && docker compose down --remove-orphans
 
 ssh:
-	ssh -o StrictHostKeyChecking=no antonmarin@$(PLATFORM_SERVER_IP)
+	ssh -o StrictHostKeyChecking=no root@$(PLATFORM_SERVER_IP)
 
 fwd-traefik:
 	ssh -NL 8080:localhost:8080 root@$(PLATFORM_SERVER_IP)
