@@ -30,8 +30,8 @@ services:
       - data:/data/
     networks:
       - ingress
-    ports:
-      - "127.0.0.1:8080:80"   # ← only localhost can reach :8080
+#    ports:
+#      - "127.0.0.1:8080:80"   # ← only localhost can reach :8080
 #    depends_on:
 #      database:
 #        condition: service_healthy
