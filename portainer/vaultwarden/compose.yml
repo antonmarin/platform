@@ -15,8 +15,10 @@ services:
       IS_TLS_ENABLED:
       ACME_HOSTNAME:
       ROUTE_HOSTNAME:
+      ADMIN_TOKEN:
       DOMAIN: "${SCHEMA}://${ACME_HOSTNAME}"
-      SIGNUPS_ALLOWED: "true"
+      SIGNUPS_ALLOWED: "false"
+      INVITATIONS_ALLOWED: "true"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.vaultwarden.rule=Host(`${ROUTE_HOSTNAME}`)"
@@ -28,9 +30,8 @@ services:
       - data:/data/
     networks:
       - ingress
-#    ports:
-#      - "80"
-#      - "443"
+    ports:
+      - "127.0.0.1:80:80"   # ← only localhost can reach :8080
 #    depends_on:
 #      database:
 #        condition: service_healthy
