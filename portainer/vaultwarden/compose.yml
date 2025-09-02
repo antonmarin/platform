@@ -2,8 +2,9 @@
 version: '3.9'
 services:
   server:
-#    deploy:
-#      resources:
+    deploy:
+      replicas: 1
+    #      resources:
 #        reservations:
 #          memory: 100M
 #        limits:
@@ -47,8 +48,12 @@ services:
       - data:/data/
     networks:
       - ingress
-#    ports:
-#      - "80:80"
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:80" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 1s
 #    depends_on:
 #      database:
 #        condition: service_healthy
