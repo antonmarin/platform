@@ -3,7 +3,7 @@ version: '3.9'
 services:
   server:
     deploy:
-      replicas: 1
+      replicas: 2
     #      resources:
 #        reservations:
 #          memory: 100M
@@ -18,14 +18,19 @@ services:
       ACME_HOSTNAME:
       ROUTE_HOSTNAME:
       DOMAIN: "${SCHEMA}://${ACME_HOSTNAME}"
-      # authentication
+      # features
       SIGNUPS_ALLOWED: "false"
       INVITATIONS_ALLOWED: "false"
       PASSWORD_HINTS_ALLOWED: "true"
       SHOW_PASSWORD_HINT: "false"
-      # mgmt
+      USER_ATTACHMENT_LIMIT: "0" # no backup of attachments now
+      ADMIN_TOKEN:
       DISABLE_ADMIN_TOKEN: "false"
-#      DATABASE_URL: "postgresql://[[user]:[password]@]host[:port][/database]"
+      # storage
+      I_REALLY_WANT_VOLATILE_STORAGE: "true"
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}"
+      RSA_KEY_FILENAME: "data/keys/rsa_key"
+      SENDS_FOLDER: "data/sends"
       # smtp
       SMTP_HOST:
       SMTP_USERNAME:
@@ -46,47 +51,46 @@ services:
       - "traefik.http.routers.vaultwarden.tls.domains[0].main=${ROUTE_HOSTNAME}"
       - "traefik.http.routers.vaultwarden.tls.domains[0].sans[0]=${ACME_HOSTNAME}"
     volumes:
-      - data:/data/
+      - keys:/data/keys/
+      - sends:/data/sends/
     networks:
       - ingress
+      - default
     healthcheck:
       test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:80" ]
-      interval: 5s
-      timeout: 3s
-      retries: 3
+      interval: 30s
+#      timeout: 3s
+      retries: 5
       start_period: 1s
-#    depends_on:
-#      database:
-#        condition: service_healthy
-#  database:
-#    deploy:
-#      replicas: 1
+    depends_on:
+      database:
+        condition: service_healthy
+  database:
+    deploy:
+      replicas: 1
 #      resources:
 #        reservations:
 #          memory: 100M
 #        limits:
 #          memory: 1G
-#    restart: unless-stopped
-#    image: postgres:15-alpine
-#    environment:
-#      - PUID=${PUID} # plex
-#      - PGID=${PGID} # storage.rw
-#      - TZ=Europe/Moscow
-#      - POSTGRES_USER=warden
-#      - POSTGRES_PASSWORD=password
-#      - POSTGRES_DB=warden
-#    volumes:
-#      - database:/var/lib/postgresql/data
-#    ports:
-#      - "5432:5432"
-#    healthcheck:
-#      test: [ "CMD-SHELL", "pg_isready -U psono" ]
-#      interval: 3s
-#      retries: 30
+    restart: unless-stopped
+    image: postgres:15-alpine
+    environment:
+      TZ: Europe/Moscow
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+      POSTGRES_DB:
+    volumes:
+      - database:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 10s
+      retries: 5
 
 volumes:
-  data:
-#  database:
+  database:
+  keys:
+  sends:  
 networks:
   ingress:
     name: "ingress"
