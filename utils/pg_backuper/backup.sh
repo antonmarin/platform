@@ -132,6 +132,7 @@ backup() {
 			rclone -q delete "${RCLONE_REMOTE}:${BACKUP_PATH}/" --min-age "${RETENTION}"
 		else
 			echo "➜ Cleaning files older than ${RETENTION} in ${BACKUP_PATH} …"
+			# shellcheck disable=SC2086
 			find "$BACKUP_PATH" -type f -name '*.gpg' -mtime +${RETENTION} -exec rm -f {} +
 		fi
 		echo "✔ Cleanup finished"
