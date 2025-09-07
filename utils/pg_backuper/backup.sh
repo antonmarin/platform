@@ -20,8 +20,8 @@ GPG_OPTS="${GPG_OPTS:---batch --yes --passphrase-fd 0 --symmetric --cipher-algo 
 # shellcheck disable=SC2034
 export RCLONE_CONFIG_S3REMOTE_TYPE="${RCLONE_CONFIG_S3REMOTE_TYPE:-s3}"
 export RCLONE_CONFIG_S3REMOTE_PROVIDER="${RCLONE_CONFIG_S3REMOTE_PROVIDER:-Minio}"
-export RCLONE_CONFIG_S3REMOTE_ENDPOINT="${RCLONE_CONFIG_S3REMOTE_ENDPOINT:-https://minio:9000}"
 export RCLONE_CONFIG_S3REMOTE_NO_CHECK_BUCKET="${RCLONE_CONFIG_S3REMOTE_NO_CHECK_BUCKET:-false}"
+export RCLONE_CONFIG_S3REMOTE_ENDPOINT="${RCLONE_CONFIG_S3REMOTE_ENDPOINT:-https://minio:9000}"
 export RCLONE_CONFIG_S3REMOTE_ACCESS_KEY_ID="${RCLONE_CONFIG_S3REMOTE_ACCESS_KEY_ID:-minioadmin}"
 export RCLONE_CONFIG_S3REMOTE_SECRET_ACCESS_KEY="${RCLONE_CONFIG_S3REMOTE_SECRET_ACCESS_KEY:-minioadmin}"
 export RCLONE_CONFIG_S3REMOTE_FORCE_PATH_STYLE="${RCLONE_CONFIG_S3REMOTE_FORCE_PATH_STYLE:-true}"
@@ -30,7 +30,7 @@ export RCLONE_CONFIG_S3REMOTE_REGION="${RCLONE_CONFIG_S3REMOTE_REGION:-us-east-1
 # какую конфигурацию rclone использовать. Локально если переменная не установлена
 RCLONE_REMOTE="${RCLONE_REMOTE:-}"
 
-# Удаление старых файлов через Х. Int дней или можно использовать 15h есть установлен RCLONE_REMOTE
+# Удаление старых файлов через Х. Int дней или https://rclone.org/docs/#time-options если установлен RCLONE_REMOTE
 RETENTION="${RETENTION:-}" # https://rclone.org/docs/#time-options
 
 #################################################################
