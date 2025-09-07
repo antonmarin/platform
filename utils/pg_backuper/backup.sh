@@ -47,7 +47,7 @@ Usage:
   $0                                   – create encrypted backup & upload to S3 if RCLONE_REMOTE set
      Environment:
        RETENTION                               Delete files older than N
-                                               Int days count or rclone --min-age string when RCLONE_REMOTE set
+                                               Int days count or rclone --min-age string https://rclone.org/docs/#time-options when RCLONE_REMOTE set
 
   $0 restore <file.sql.gz.gpg|latest>  – restore database
      Options:
