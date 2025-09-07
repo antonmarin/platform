@@ -111,7 +111,7 @@ services:
       PGHOST: "database"
       PGPORT: "5432"
       RCLONE_REMOTE: "s3remote"
-      RETENTION: "5m"
+      RETENTION: "6M"
     depends_on:
       database:
         condition: service_healthy
