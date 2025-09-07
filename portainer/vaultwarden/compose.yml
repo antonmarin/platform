@@ -4,7 +4,7 @@ services:
   server:
     deploy:
       replicas: 2
-    #      resources:
+#      resources:
 #        reservations:
 #          memory: 100M
 #        limits:
@@ -87,6 +87,38 @@ services:
       interval: 10s
       retries: 5
 
+  backuper:
+    deploy:
+      replicas: 1
+#      resources:
+#        reservations:
+#          memory: 100M
+#        limits:
+#          memory: 1G
+    restart: no
+    image: antonmarin/pg_backuper:latest # https://hub.docker.com/r/antonmarin/pg_backuper
+    command: [ "backup" ]
+    environment:
+      POSTGRES_USER:
+      POSTGRES_DB:
+      POSTGRES_PASSWORD:
+      GPG_PASSPHRASE:
+      BACKUP_PATH:
+      RCLONE_CONFIG_S3REMOTE_ENDPOINT:
+      RCLONE_CONFIG_S3REMOTE_ACCESS_KEY_ID:
+      RCLONE_CONFIG_S3REMOTE_SECRET_ACCESS_KEY:
+      TZ: Europe/Moscow
+      PGHOST: "database"
+      PGPORT: "5432"
+      RCLONE_REMOTE: "s3remote"
+      RETENTION: "5m"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - s3
+      - default
+
 volumes:
   database:
   keys:
@@ -94,3 +126,5 @@ volumes:
 networks:
   ingress:
     name: "ingress"
+  s3:
+    name: "s3"
