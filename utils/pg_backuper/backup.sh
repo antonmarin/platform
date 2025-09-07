@@ -219,6 +219,6 @@ restore() {
 ############################  MAIN  ############################
 case ${1:-usage} in
 backup) backup ;;
-restore) [ $# -eq 2 ] && restore "$2" || usage ;;
+restore) restore "$2" ;;
 *) usage ;;
 esac

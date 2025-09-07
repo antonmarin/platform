@@ -48,3 +48,11 @@ fwd-traefik:
 
 fwd-portainer:
 	ssh -NL 9001:$(PLATFORM_SERVER_IP):9001 root@$(PLATFORM_SERVER_IP)
+
+update-utils:
+	docker build --platform=linux/amd64,linux/arm64 -t antonmarin/pg_backuper ./utils/pg_backuper && docker push antonmarin/pg_backuper
+
+test-restore:
+	docker compose -f portainer/vaultwarden/compose.yml down --remove-orphans || true
+	docker volume rm vaultwarden_database || true
+	docker compose -f portainer/vaultwarden/compose.yml run --remove-orphans backuper restore latest
