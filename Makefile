@@ -1,5 +1,5 @@
 .DEFAULT_GOAL=help
-include .env
+-include .env
 export $(shell sed 's/=.*//' .env)
 
 help: #? help me
