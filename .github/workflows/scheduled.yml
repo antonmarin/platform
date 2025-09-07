@@ -13,3 +13,12 @@ jobs:
         uses: actions/checkout@v4 # https://github.com/actions/checkout
       - name: restore
         run: make test-restore
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: pass
+          POSTGRES_DB: test
+          GPG_PASSPHRASE: ${{ secrets.VW_BACKUP_PASSPHRASE }}
+          BACKUP_PATH: ${{ secrets.VW_BACKUP_PATH }}
+          RCLONE_CONFIG_S3REMOTE_ENDPOINT: ${{ secrets.VW_BACKUP_ENDPOINT }}
+          RCLONE_CONFIG_S3REMOTE_ACCESS_KEY_ID: ${{ secrets.VW_BACKUP_KEY_ID }}
+          RCLONE_CONFIG_S3REMOTE_SECRET_ACCESS_KEY: ${{ secrets.VW_BACKUP_SECRET }}
