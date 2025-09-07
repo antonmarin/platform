@@ -198,7 +198,6 @@ restore() {
 		echo "➜ Downloading $RCLONE_REMOTE:$BACKUP_PATH/$filename -> $local_dest …"
 		rclone -q copy "$RCLONE_REMOTE:$BACKUP_PATH/$filename" "$TMP_DIR/"
 		echo "✔ Remote backup $RCLONE_REMOTE:$BACKUP_PATH/$filename downloaded to $TMP_DIR"
-		filename=$local_dest
 	else
 		echo "➜ Moving $BACKUP_PATH/$filename -> $local_dest …"
 		cp "$BACKUP_PATH/$filename" "$local_dest"
@@ -207,6 +206,7 @@ restore() {
 
 	[ -f "$local_dest" ] || {
 		echo "❌ Error preparing backup to use: $local_dest" >&2
+		ls -la "$TMP_DIR"
 		exit 1
 	}
 
