@@ -10,7 +10,10 @@ services:
       - PGID=${PGID} # storage.rw
       - TZ=Europe/Moscow
       - VERSION=public
-      - PLEX_CLAIM='${PLEX_CLAIM}' #optional
+      # to reclaim go to http://<ip>:32400/web
+      # optional https://account.plex.tv/claim
+      # rm /config/Library/Application Support/Plex Media Server/Preferences.xml to reset
+      - PLEX_CLAIM='${PLEX_CLAIM}'
     volumes:
       - plex_app:/config
       - media_video:/video

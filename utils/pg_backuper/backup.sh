@@ -9,7 +9,7 @@ POSTGRES_DB="${POSTGRES_DB:-database}"
 POSTGRES_PASSWORD="${POSTGRES_PASSWORD:-}"
 
 # Директорий с бэкапами. Включает имя бакета при использовании s3
-TMP_DIR="${TMP_DIR:-/tmp}"
+TMP_DIR="${TMP_DIR:-/tmp/}"
 BACKUP_PATH="${BACKUP_PATH:-./backups}"
 DUMP_FILE="${DUMP_FILE:-${POSTGRES_DB}_$(date +%F_%H-%M).sql.gz}"
 
@@ -17,16 +17,15 @@ DUMP_FILE="${DUMP_FILE:-${POSTGRES_DB}_$(date +%F_%H-%M).sql.gz}"
 GPG_PASSPHRASE="${GPG_PASSPHRASE:-}"
 GPG_OPTS="${GPG_OPTS:---batch --yes --passphrase-fd 0 --symmetric --cipher-algo AES256 --compress-algo 2}"
 
-# shellcheck disable=SC2034
-export RCLONE_CONFIG_S3REMOTE_TYPE="${RCLONE_CONFIG_S3REMOTE_TYPE:-s3}"
-export RCLONE_CONFIG_S3REMOTE_PROVIDER="${RCLONE_CONFIG_S3REMOTE_PROVIDER:-Minio}"
-export RCLONE_CONFIG_S3REMOTE_NO_CHECK_BUCKET="${RCLONE_CONFIG_S3REMOTE_NO_CHECK_BUCKET:-true}"
-export RCLONE_CONFIG_S3REMOTE_ENDPOINT="${RCLONE_CONFIG_S3REMOTE_ENDPOINT:-https://minio:9000}"
-export RCLONE_CONFIG_S3REMOTE_ACCESS_KEY_ID="${RCLONE_CONFIG_S3REMOTE_ACCESS_KEY_ID:-minioadmin}"
-export RCLONE_CONFIG_S3REMOTE_SECRET_ACCESS_KEY="${RCLONE_CONFIG_S3REMOTE_SECRET_ACCESS_KEY:-minioadmin}"
-export RCLONE_CONFIG_S3REMOTE_FORCE_PATH_STYLE="${RCLONE_CONFIG_S3REMOTE_FORCE_PATH_STYLE:-true}"
+export RCLONE_CONFIG_REMOTE_TYPE="${RCLONE_CONFIG_REMOTE_TYPE:-s3}"
+export RCLONE_CONFIG_REMOTE_PROVIDER="${RCLONE_CONFIG_REMOTE_PROVIDER:-Minio}"
+export RCLONE_CONFIG_REMOTE_NO_CHECK_BUCKET="${RCLONE_CONFIG_REMOTE_NO_CHECK_BUCKET:-true}"
+export RCLONE_CONFIG_REMOTE_ENDPOINT="${RCLONE_CONFIG_REMOTE_ENDPOINT:-https://minio:9000}"
+export RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID="${RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID:-minioadmin}"
+export RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY="${RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY:-minioadmin}"
+export RCLONE_CONFIG_REMOTE_FORCE_PATH_STYLE="${RCLONE_CONFIG_REMOTE_FORCE_PATH_STYLE:-true}"
 # регион обязателен даже для MinIO
-export RCLONE_CONFIG_S3REMOTE_REGION="${RCLONE_CONFIG_S3REMOTE_REGION:-us-east-1}"
+export RCLONE_CONFIG_REMOTE_REGION="${RCLONE_CONFIG_REMOTE_REGION:-us-east-1}"
 # какую конфигурацию rclone использовать. Локально если переменная не установлена
 RCLONE_REMOTE="${RCLONE_REMOTE:-}"
 
@@ -61,7 +60,7 @@ Supported environment variables (* - required):
   POSTGRES_DB*                                 Database name (default: database)
   POSTGRES_PASSWORD*
   GPG_PASSPHRASE*                              Password phrase for encryption / decryption
-  TMP_DIR*                                     Temp directory for work files (default: /tmp)
+  TMP_DIR*                                     Temp directory for work files (default: /tmp/)
   BACKUP_PATH*                                 Path to directory with backups. S3 bucket name prefixed when RCLONE_REMOTE used. (default: ./backups)
   RCLONE_REMOTE                                Use rclone configuration. Uploads/downloads backup if set. (default: not set)
 
@@ -103,7 +102,7 @@ backup() {
 
 	# execution
 
-	target="${TMP_DIR}/${DUMP_FILE}"
+	target="${TMP_DIR}${DUMP_FILE}"
 
 	echo "➜ Dumping ${POSTGRES_DB} into ${target} …"
 	pg_dump -w -h "$PGHOST" -p "$PGPORT" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f - | gzip > "$target"
@@ -193,10 +192,10 @@ restore() {
 	fi
 
 	# сначала изолируем от изменений
-	local_dest=$TMP_DIR/$(basename "$filename")
+	local_dest=${TMP_DIR}$(basename "$filename")
 	if [ -n "$RCLONE_REMOTE" ]; then
 		echo "➜ Downloading $RCLONE_REMOTE:$BACKUP_PATH/$filename -> $local_dest …"
-		rclone -q copy "$RCLONE_REMOTE:$BACKUP_PATH/$filename" "$TMP_DIR/"
+		rclone -q copy  --ignore-existing --ignore-times "$RCLONE_REMOTE:$BACKUP_PATH/$filename" "$TMP_DIR"
 		echo "✔ Remote backup $RCLONE_REMOTE:$BACKUP_PATH/$filename downloaded to $TMP_DIR"
 	else
 		echo "➜ Moving $BACKUP_PATH/$filename -> $local_dest …"
