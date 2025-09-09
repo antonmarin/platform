@@ -97,7 +97,8 @@ services:
 #          memory: 1G
     restart: no
     image: antonmarin/pg_backuper:latest # https://hub.docker.com/r/antonmarin/pg_backuper
-    command: [ "backup" ]
+    entrypoint: [ "/bin/sh", "-c" ]
+    command: [ "echo '15 */12 * * * /backup.sh backup' | crontab - && crond -f" ]
     environment:
       POSTGRES_USER:
       POSTGRES_DB:
