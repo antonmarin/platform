@@ -1,8 +1,8 @@
 name: scheduled
 on: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#push
-#  schedule:
-#    - cron: "15 */4 * * *"
-  push:
+  schedule:
+    - cron: "15 */4 * * *"
+#  push: # uncomment to test
 jobs:
   update-utils:
     name: Test restoring vaultwarden database
