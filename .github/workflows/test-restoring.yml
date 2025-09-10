@@ -14,9 +14,9 @@ jobs:
       - name: restore
         run: make test-restore
         env:
-          POSTGRES_USER: user
+          POSTGRES_USER: vaultwarden
           POSTGRES_PASSWORD: pass
-          POSTGRES_DB: vaultwarden
+          POSTGRES_DB: test
           GPG_PASSPHRASE: ${{ secrets.VW_BACKUP_PASSPHRASE }}
           BACKUP_PATH: ${{ secrets.VW_BACKUP_PATH }}
           RCLONE_CONFIG_REMOTE_ENDPOINT: ${{ secrets.VW_BACKUP_ENDPOINT }}
