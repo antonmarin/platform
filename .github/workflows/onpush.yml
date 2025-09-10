@@ -5,6 +5,9 @@ jobs:
     name: Integration pipeline
     runs-on: ubuntu-latest
     if: ${{ github.ref_name == 'master' }}
+    paths:
+      - Makefile
+      - utils/pg_backuper
     steps:
       - name: Checkout
         uses: actions/checkout@v4 # https://github.com/actions/checkout
