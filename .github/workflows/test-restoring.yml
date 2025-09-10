@@ -2,7 +2,7 @@ name: test restoring
 on: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#push
   schedule:
     - cron: "15 */4 * * *"
-#  push: # uncomment to test
+  push: # uncomment to test
 jobs:
   update-utils:
     name: Test restoring vaultwarden database
@@ -16,7 +16,7 @@ jobs:
         env:
           POSTGRES_USER: user
           POSTGRES_PASSWORD: pass
-          POSTGRES_DB: test
+          POSTGRES_DB: vaultwarden
           GPG_PASSPHRASE: ${{ secrets.VW_BACKUP_PASSPHRASE }}
           BACKUP_PATH: ${{ secrets.VW_BACKUP_PATH }}
           RCLONE_CONFIG_REMOTE_ENDPOINT: ${{ secrets.VW_BACKUP_ENDPOINT }}
