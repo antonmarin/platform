@@ -1,13 +1,19 @@
-name: onpush
-on: [push] # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#push
+name: update-utils
+on: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#push
+  push:
+    paths:
+      - 'Makefile'
+      - 'utils'
+  pull_request:
+    paths:
+      - 'Makefile'
+      - 'utils'
+
 jobs:
   update-utils:
     name: Integration pipeline
     runs-on: ubuntu-latest
     if: ${{ github.ref_name == 'master' }}
-    paths:
-      - Makefile
-      - utils/pg_backuper
     steps:
       - name: Checkout
         uses: actions/checkout@v4 # https://github.com/actions/checkout
