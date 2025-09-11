@@ -1,4 +1,6 @@
 ---
+version: "3.9"
+
 services:
   portainer:
     image: portainer/portainer-ce:2.27.1-alpine
