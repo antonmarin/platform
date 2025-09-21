@@ -23,10 +23,11 @@ command -v docker >/dev/null 2>&1 || { echo "docker not found in PATH"; exit 1; 
 MODE=$1
 VOLUME=$2
 ARCHIVE=${3:-}
+SCRIPT_DIR="$(dirname $(realpath $0))"
 
 # Дефолтное имя архива при backup
 if [ "$MODE" = "backup" ] && [ -z "$ARCHIVE" ]; then
-  ARCHIVE="./${VOLUME}-$(date +%F).tar.gz"
+  ARCHIVE="${SCRIPT_DIR}/${VOLUME}-$(date +%F).tar.gz"
 fi
 
 # Проверка существования тома
