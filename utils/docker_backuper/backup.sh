@@ -1,8 +1,5 @@
-#!/bin/sh
+#!/bin/env bash
 set -euf # Прекратить выполнение при любой ошибке
-
-#docker run --rm -v portainer_portainer_app:/data -v ./backup:/backup alpine \
-#    tar -czf "/backup/portainer-backup-$(date +%Y%m%d-%H%M).tar.gz" -C /data .
 
 usage() {
 	cat <<EOF
@@ -29,16 +26,15 @@ command -v docker >/dev/null 2>&1 || {
 [ $# -ge 2 ] || usage
 MODE=$1
 VOLUME=$2
-ARCHIVE=${3:-}
 SCRIPT_DIR="$(dirname $(realpath $0))"
+ARCHIVE=${3:-"${SCRIPT_DIR}/${VOLUME}-$(date +%F).tar.gz"}
+BACKUP_PATH=$(dirname "$ARCHIVE")
+
 # Удаление старых файлов через Х. Int дней или https://rclone.org/docs/#time-options если установлен RCLONE_REMOTE
 RETENTION="${RETENTION:-}" # https://rclone.org/docs/#time-options
 
-# Дефолтное имя архива при backup
-if [ "$MODE" = "backup" ] && [ -z "$ARCHIVE" ]; then
-	ARCHIVE="${SCRIPT_DIR}/${VOLUME}-$(date +%F).tar.gz"
-fi
-BACKUP_PATH="$(dirname $ARCHIVE)"
+# какую конфигурацию rclone использовать. Локально если переменная не установлена
+RCLONE_REMOTE="${RCLONE_REMOTE:-}"
 
 # Проверка существования тома
 volume_exists() {
@@ -51,13 +47,12 @@ do_backup() {
 		echo "volume $VOLUME not found"
 		exit 1
 	}
-	# Директория, куда положим архив
-	dir=$(dirname "$ARCHIVE")
+
 	file=$(basename "$ARCHIVE")
 	echo "backing up volume $VOLUME -> $ARCHIVE"
 	docker run --rm \
 		-v "$VOLUME:/data:ro" \
-		-v "$dir:/backup" \
+		-v "$BACKUP_PATH:/backup" \
 		alpine \
 		tar -czf "/backup/$file" -C /data .
 	echo "done: $(ls -lh "$ARCHIVE" | awk '{print $5}')"
@@ -83,10 +78,11 @@ do_restore() {
 		echo "archive $ARCHIVE not found"
 		exit 1
 	}
+
 	if volume_exists "$VOLUME"; then
 		printf "volume %s already exists. Overwrite? [y/N] " "$VOLUME"
-		read ans
-		case "$ans" in
+		read answer
+		case "$answer" in
 		y | Y) ;;
 		*)
 			echo "cancelled"
@@ -97,15 +93,15 @@ do_restore() {
 		echo "creating volume $VOLUME"
 		docker volume create "$VOLUME" >/dev/null
 	fi
-	dir=$(dirname "$ARCHIVE")
+
 	file=$(basename "$ARCHIVE")
 	echo "restoring $ARCHIVE into volume $VOLUME"
 	docker run --rm \
 		-v "$VOLUME:/data" \
-		-v "$dir:/backup" \
+		-v "$BACKUP_PATH:/backup" \
 		alpine \
 		tar -xzf "/backup/$file" -C /data
-	echo "restore complete"
+	echo "$VOLUME restore complete"
 }
 
 case "$MODE" in
