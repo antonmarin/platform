@@ -6,18 +6,13 @@ services:
     image: minio/minio:latest
     command: server /data --console-address ":9001"
     ports:
-      - "9000:9000"   # S3-API
-      - "9001:9001"   # Web-UI
+      - "29000:9000"   # S3-API
+      - "29001:9001"   # Web-UI
     environment:
       MINIO_ROOT_USER:
       MINIO_ROOT_PASSWORD:
     volumes:
       - data:/data
-    networks:
-      - s3
 
 volumes: 
   data:
-networks:
-  s3:
-    name: "s3"

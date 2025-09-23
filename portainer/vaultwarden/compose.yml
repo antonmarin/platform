@@ -98,7 +98,10 @@ services:
     restart: no
     image: antonmarin/backuper:latest # https://hub.docker.com/r/antonmarin/backuper
     entrypoint: [ "/bin/sh", "-c" ]
-    command: [ "echo '15 */12 * * * /backup.sh pg_backup ${BACKUP_PATH}' | crontab - && crond -f" ]
+#    command: [ '/backuper/backuper.sh pg_backup ${BACKUP_PATH}' ]
+    command:  
+      - "echo '15 */12 * * * /backuper/backuper.sh pg_backup ${BACKUP_PATH}' | crontab - && crond -l4 -f" 
+    
     environment:
       DEBUG: "true"
       PGHOST: "database"
@@ -118,9 +121,6 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    networks:
-      - s3
-      - default
 
 volumes:
   database:
@@ -129,6 +129,3 @@ volumes:
 networks:
   ingress:
     name: "ingress"
-  s3:
-    name: "s3"
-    external: true

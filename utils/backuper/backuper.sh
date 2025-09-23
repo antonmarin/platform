@@ -47,7 +47,7 @@ pg_backup() {
 	--help | -h)
 		cat <<EOF
 Backup postgresql database to tar archive
-	Usage: pg_backup STORAGE_DIR <ARCHIVE_FILENAME|latest>
+	Usage: pg_backup STORAGE_DIR [ARCHIVE_FILENAME]
 
 	Environment variables (* - required):
 		PGHOST                   Postgres host (default: localhost)
