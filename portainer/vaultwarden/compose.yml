@@ -96,22 +96,23 @@ services:
 #        limits:
 #          memory: 1G
     restart: no
-    image: antonmarin/pg_backuper:latest # https://hub.docker.com/r/antonmarin/pg_backuper
+    image: antonmarin/backuper:latest # https://hub.docker.com/r/antonmarin/backuper
     entrypoint: [ "/bin/sh", "-c" ]
-    command: [ "echo '15 */12 * * * /backup.sh backup' | crontab - && crond -f" ]
+    command: [ "echo '15 */12 * * * /backup.sh pg_backup ${BACKUP_PATH}' | crontab - && crond -f" ]
     environment:
-      POSTGRES_USER:
+      DEBUG: "true"
+      PGHOST: "database"
+      PGPORT: "5432"
       POSTGRES_DB:
+      POSTGRES_USER:
       POSTGRES_PASSWORD:
+      TMP_DIR:
       GPG_PASSPHRASE:
       BACKUP_PATH:
       RCLONE_CONFIG_REMOTE_ENDPOINT:
       RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID:
       RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY:
-      TMP_DIR:
       TZ: Europe/Moscow
-      PGHOST: "database"
-      PGPORT: "5432"
       RCLONE_REMOTE: "remote"
       RETENTION: "6M"
     depends_on:
@@ -130,3 +131,4 @@ networks:
     name: "ingress"
   s3:
     name: "s3"
+    external: true
