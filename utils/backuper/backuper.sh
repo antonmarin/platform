@@ -37,7 +37,6 @@ EOF
 dir_backup() {
 	sourceDir="${1:---help}"
 	storageDir="${2:-}"
-	archive_filename=${3:-$(basename ${sourceDir})_$(date +%F_%H-%M).tar.gz}
 
 	case "$sourceDir" in
 	--help | -h)
@@ -54,6 +53,8 @@ EOF
 		return 0
 		;;
 	esac
+
+	archive_filename=${3:-$(basename ${sourceDir})_$(date +%F_%H-%M).tar.gz}
 
 	[ -n "$storageDir" ] || {
 		printf '❌ STORAGE_DIR not set\n' >&2
