@@ -100,8 +100,7 @@ services:
     entrypoint: [ "/bin/sh", "-c" ]
 #    command: [ '/backuper/backuper.sh pg_backup ${BACKUP_PATH}' ]
     command:  
-      - "echo '15 */12 * * * /backuper/backuper.sh pg_backup ${BACKUP_PATH}' | crontab - && crond -l4 -f" 
-    
+      - "echo '15 */12 * * * /backuper/backuper.sh pg_backup ${BACKUP_PATH}' | crontab - && crond -L /dev/stdout -l4 -f" 
     environment:
       DEBUG: "true"
       PGHOST: "database"
