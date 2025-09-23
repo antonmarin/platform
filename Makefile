@@ -59,3 +59,5 @@ test-restore:
 	docker compose -f portainer/vaultwarden/compose.yml down --remove-orphans || true
 	docker volume rm vaultwarden_database || true
 	docker compose -f portainer/vaultwarden/compose.yml run --remove-orphans backuper '/backuper/backuper.sh pg_restore latest "$$BACKUP_PATH"'
+	docker compose -f portainer/vaultwarden/compose.yml run --remove-orphans backuper '/backuper/backuper.sh dir_restore latest portainer.backups /tmp/test'
+

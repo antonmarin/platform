@@ -18,6 +18,8 @@ Backup util
 	Commands:
 	- pg_backup
 	- pg_restore
+	- dir_backup
+	- dir_restore
 	  utils:
 	- encrypt
 	- decrypt
@@ -30,6 +32,91 @@ Features:
 EOF
 }
 
+######################## DIRECTORY ####################
+
+dir_backup() {
+	sourceDir="${1:---help}"
+	storageDir="${2:-}"
+	archive_filename=${3:-$(basename ${sourceDir})_$(date +%F_%H-%M).tar.gz}
+
+	case "$sourceDir" in
+	--help | -h)
+		cat <<EOF
+Backups directory to tar archive
+	Usage: dir_backup SOURCE_DIR STORAGE_DIR [ARCHIVE_FILENAME]
+
+	Environment variables (* - required):
+		TMP_DIR                  Directory to isolate archive (default: /tmp)
+
+		GPG_PASSPHRASE*          Password phrase for encryption / decryption
+		RCLONE_REMOTE            Use rclone configuration. Uploads/downloads backup if set. (default: not set)
+EOF
+		return 0
+		;;
+	esac
+
+	[ -n "$storageDir" ] || {
+		printf '❌ STORAGE_DIR not set\n' >&2
+		return 1
+	}
+
+	if [ ! -d "$sourceDir" ]; then
+		printf '❌ SOURCE_DIR directory "%s" not found or not directory\n' "$sourceDir" >&2
+		return 1
+	fi
+
+	isolating_dest="$TMP_DIR/$archive_filename"
+	log '➜ Archiving directory "%s" to "%s"\n' "$sourceDir" "${isolating_dest}"
+	tar -czf "$isolating_dest" -C "$sourceDir" .
+	log '✔ Archiving finished: %s\n' "$(ls -lh "$isolating_dest" | awk '{print $5}')"
+
+	DEBUG=false upload "$isolating_dest" "$storageDir"
+	return 0
+}
+
+dir_restore() {
+	archive_filename=${1:---help}
+	storageDir="${2:-}"
+	targetDir="${3:-}"
+
+	case "$archive_filename" in
+	--help | -h)
+		cat <<EOF
+Restores directory from tar archive
+	Usage: dir_restore <ARCHIVE_FILENAME|latest> STORAGE_DIR TARGET_DIR
+
+	Environment variables (* - required):
+		TMP_DIR                  Directory to isolate archive (default: /tmp)
+
+		RCLONE_REMOTE            Use rclone configuration. Uploads/downloads backup if set. (default: not set)
+EOF
+		return 0
+		;;
+	esac
+
+	[ -n "$storageDir" ] || {
+		printf '❌ STORAGE_DIR not set\n' >&2
+		return 1
+	}
+
+	[ -n "$targetDir" ] || {
+		printf '❌ TARGET_DIR not set\n' >&2
+		return 1
+	}
+
+	if [ ! -e "$targetDir" ]; then
+		printf '➜ TARGET_DIR directory "%s" not exists. Try to create\n' "$targetDir"
+		mkdir -p "$targetDir"
+	fi
+
+	isolating_dest=$(DEBUG=false download "$storageDir" "$archive_filename" "$TMP_DIR")
+	log '➜ Restoring "%s" …\n' "$isolating_dest"
+	tar -xzf "$isolating_dest" -C "$targetDir"
+	log '✔ Restore finished\n'
+
+	return 0
+}
+
 ######################## POSTGRESQL ###################
 PGHOST="${PGHOST:-localhost}"
 PGPORT="${PGPORT:-5432}"
@@ -38,7 +125,6 @@ POSTGRES_USER="${POSTGRES_USER:-postgres}"
 POSTGRES_PASSWORD="${POSTGRES_PASSWORD:-}"
 
 TMP_DIR="${TMP_DIR:-/tmp}"
-BACKUPS_STORAGE_DIR="${BACKUPS_STORAGE_DIR:-./backups}"
 pg_backup() {
 	storageDir="${1:---help}"
 	archive_filename=${2:-${POSTGRES_DB}_$(date +%F_%H-%M).sql.gz}
@@ -88,6 +174,8 @@ EOF
 
 	DEBUG=false upload "$crypt" "${storageDir}"
 	log '✔ Backup uploaded to "%s"\n' "${storageDir}$crypt"
+
+	return 0
 }
 
 pg_restore() {
@@ -133,10 +221,11 @@ EOF
 
 	isolating_dest=$(DEBUG=false download "$storageDir" "$archive_filename" "$TMP_DIR")
 
-#	isolating_dest="${TMP_DIR}/$(basename "${archive_filename%.gpg}").gpg" # not exists
 	log '➜ Decrypting & restoring "%s" …\n' "$isolating_dest"
 	DEBUG=false decrypt "$isolating_dest" - | zcat | psql -h "$PGHOST" -p "$PGPORT" -U "$POSTGRES_USER" -d "$POSTGRES_DB"
 	log '✔ Restore finished\n'
+
+	return 0
 }
 
 ############################  ENCRYPTING ################
@@ -362,7 +451,7 @@ download() {
 }
 
 ############################  MAIN  ############################
-log "Started with: %s\n" "$@"
+#log "Started with: %s\n" "$@"
 case ${1:-usage} in
 encrypt) encrypt "${2:-}" "${3:-}" || encrypt --help ;;
 decrypt) decrypt "${2:-}" "${3:-}" || decrypt --help ;;
@@ -370,5 +459,7 @@ upload) upload "${2:-}" "${3:-}" "${4:-}" || upload --help ;;
 download) download "${2:-}" "${3:-}" "${4:-}" || download --help ;;
 pg_backup) pg_backup "${2:-}" "${3:-}" ;;
 pg_restore) pg_restore "${2:-}" "${3:-}" ;;
+dir_backup) dir_backup "${2:-}" "${3:-}" "${4:-}" ;;
+dir_restore) dir_restore "${2:-}" "${3:-}" "${4:-}" ;;
 *) usage ;;
 esac
