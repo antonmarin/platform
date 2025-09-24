@@ -25,7 +25,7 @@ services:
     #          memory: 100M
     #        limits:
     #          memory: 1G
-    restart: no
+    restart: "no"
     image: antonmarin/backuper:latest # https://hub.docker.com/r/antonmarin/backuper
     entrypoint: [ "/bin/sh", "-c" ]
     #    command: [ '/backuper/backuper.sh pg_backup ${BACKUP_PATH}' ]
