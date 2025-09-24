@@ -25,7 +25,7 @@ jobs:
       - name: test-port
         run: make test-restore-port
         env:
-          BACKUP_PATH: ${{ env.PORT_BACKUP_PATH }}
+          BACKUP_PATH: ${{ vars.PORT_BACKUP_PATH }}
           RCLONE_CONFIG_REMOTE_ENDPOINT: ${{ secrets.VW_BACKUP_ENDPOINT }}
           RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID: ${{ secrets.VW_BACKUP_KEY_ID }}
           RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY: ${{ secrets.VW_BACKUP_SECRET }}
