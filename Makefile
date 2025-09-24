@@ -55,9 +55,10 @@ fwd-docker:
 update-utils:
 	docker buildx build --push --platform=linux/amd64,linux/arm64 -t antonmarin/backuper ./utils/backuper
 
-test-restore:
+test-restore-vw:
 	docker compose -f portainer/vaultwarden/compose.yml down --remove-orphans || true
 	docker volume rm vaultwarden_database || true
 	docker compose -f portainer/vaultwarden/compose.yml run --remove-orphans backuper '/backuper/backuper.sh pg_restore latest "$$BACKUP_PATH"'
-	docker compose -f portainer/vaultwarden/compose.yml run --remove-orphans backuper '/backuper/backuper.sh dir_restore latest portainer.backups /tmp/test'
+test-restore-port:
+	docker compose -f portainer/vaultwarden/compose.yml run --remove-orphans backuper '/backuper/backuper.sh dir_restore latest "$$BACKUP_PATH" /tmp/test'
 

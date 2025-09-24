@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="4f3d7cc9-78fa-48c3-990f-6d00aabbeeba" name="timeweb-club">
+        <fileTransfer rootFolder="/root" accessType="SFTP" host="46.149.66.136" port="22" sshConfigId="c491c262-061a-481b-824b-714d9d00a638" sshConfig="root@46.149.66.136:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
