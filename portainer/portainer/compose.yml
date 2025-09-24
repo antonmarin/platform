@@ -17,6 +17,32 @@ services:
           memory: 100M
         limits:
           memory: 1G
+  backuper:
+    deploy:
+      replicas: 1
+    #      resources:
+    #        reservations:
+    #          memory: 100M
+    #        limits:
+    #          memory: 1G
+    restart: no
+    image: antonmarin/backuper:latest # https://hub.docker.com/r/antonmarin/backuper
+    entrypoint: [ "/bin/sh", "-c" ]
+    #    command: [ '/backuper/backuper.sh pg_backup ${BACKUP_PATH}' ]
+    command:
+      - "echo '30 */12 * * * /backuper/backuper.sh dir_backup /input ${BACKUP_PATH}' | crontab - && crond -L /dev/stdout -l4 -f"
+    volumes:
+      - "portainer_app:/input:ro"
+    environment:
+      DEBUG: "true"
+      TMP_DIR:
+      BACKUP_PATH:
+      RCLONE_CONFIG_REMOTE_ENDPOINT:
+      RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID:
+      RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY:
+      TZ: Europe/Moscow
+      RCLONE_REMOTE: "remote"
+      RETENTION: "7d"
 
 volumes:
   portainer_app:

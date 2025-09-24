@@ -5,7 +5,7 @@ on: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-wor
   push: # uncomment to test
 jobs:
   update-utils:
-    name: Test restoring vaultwarden database
+    name: Test restoring backups
     runs-on: ubuntu-latest
     if: ${{ github.ref_name == 'master' }}
     steps:
