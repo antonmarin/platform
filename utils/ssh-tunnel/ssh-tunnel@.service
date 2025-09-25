@@ -1,0 +1,14 @@
+[Unit]
+Description=SSH Tunnel for user %i
+After=network.target
+
+[Service]
+Type=simple
+User=%i
+WorkingDirectory=/var/lib/%i
+ExecStart=/var/lib/%i/ssh_tunnel.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
