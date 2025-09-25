@@ -15,8 +15,7 @@
 - Устанавливаем доступ по ключу на удаленный сервер
   `sudo -u tunnel ssh-copy-id -i /volume1/homes/tunnel/.ssh/id_ed25519.pub user@remote.server.com`
 - разместить `tunnel.sh` в `/volume1/homes/tunnel`
-- разместить `ssh-tunnel.service` в `/etc/systemd/system/multi-user.target.wants/ssh-tunnel.service`
-  или `/usr/lib/systemd/system`
+- разместить `ssh-tunnel@.service` в `/usr/lib/systemd/system/ssh-tunnel@.service`
 - `sudo systemctl daemon-reload`
 - `sudo systemctl enable ssh-tunnel@tunnel.service`
 - `sudo systemctl start ssh-tunnel@tunnel.service`
