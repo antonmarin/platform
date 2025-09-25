@@ -5,8 +5,8 @@ After=network.target
 [Service]
 Type=simple
 User=%i
-WorkingDirectory=/var/lib/%i
-ExecStart=/var/lib/%i/ssh_tunnel.sh
+WorkingDirectory=/volume1/homes/tunnel
+ExecStart=/volume1/homes/tunnel/ssh_tunnel.sh
 Restart=always
 RestartSec=10
 
