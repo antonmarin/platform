@@ -1,9 +1,11 @@
 #cloud-config
+# to protect https://docs.docker.com/engine/security/protect-access/
 
 write_files:
+# docker. enable tcp, use hub proxy
   - path: /etc/docker/daemon.json
     content: |
-      { "registry-mirrors" : [ "https://dockerhub.timeweb.cloud" ] }
+      { "hosts": ["unix:///var/run/docker.sock", "tcp://127.0.0.1:2375"], "registry-mirrors" : [ "https://dockerhub.timeweb.cloud" ] }
 
 output: 
   all: '/var/log/cloud-init.log'
