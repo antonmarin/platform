@@ -6,6 +6,8 @@ services:
     image: portainer/portainer-ce:2.27.1-alpine
     container_name: portainer
     restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "9000:9000"
     volumes:
