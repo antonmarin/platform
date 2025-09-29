@@ -1,6 +1,16 @@
 #!/usr/bin/env sh
 set -euf
 
+############################ UTILS #############################
+DEBUG=${DEBUG:-false}
+log() {
+	# shellcheck disable=SC2059
+	${DEBUG} && printf "$@"
+	return 0
+}
+
+#################################################################
+
 usage() {
 	cat <<EOF
 Local tunnel with auto-reconnect
@@ -28,8 +38,8 @@ tunnel() {
 }
 
 ############################  MAIN  ############################
-#log "Started with: %s\n" "$@"
+#log 'Started with: %s\n' "$@"
 case ${1:-usage} in
 usage) usage ;;
-*) tunnel "${2:-}" "${3:-}" || usage ;;
+*) tunnel "${1:-}" "${2:-}" || usage ;;
 esac
