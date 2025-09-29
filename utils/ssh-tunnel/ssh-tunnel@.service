@@ -6,6 +6,7 @@ After=network.target
 Type=simple
 User=%i
 WorkingDirectory=/volume1/homes/tunnel
+Environment=DEBUG=true
 ExecStart=/volume1/homes/tunnel/ssh_tunnel.sh
 Restart=always
 RestartSec=10
