@@ -8,7 +8,7 @@ Type=simple
 WorkingDirectory=/volume1/homes/tunnel
 Environment=DEBUG=true
 EnvironmentFile=/volume1/homes/tunnel/tunnel.env
-ExecStart=/bin/su -s /bin/sh -c '/volume1/homes/tunnel/tunnel.sh' tunnel
+ExecStart=/bin/su -s /bin/sh -c '/volume1/homes/tunnel/tunnel.sh ${%i}_TUNNEL ${%i}_CONNECTION' tunnel
 Restart=always
 RestartSec=10
 StandardOutput=journal
