@@ -20,4 +20,4 @@
 - `sudo systemctl enable ssh-tunnel@tunnel.service`
 - `sudo systemctl start ssh-tunnel@tunnel.service`
 - `sudo systemctl status ssh-tunnel@tunnel.service`
-- логи в `journalctl -u ssh-tunnel@tunnel.service -b`
+- логи в `sudo journalctl -u ssh-tunnel@tunnel.service -b`
