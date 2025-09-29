@@ -1,13 +1,14 @@
 [Unit]
-Description=SSH Tunnel for user %i
+Description=SSH Tunnel for instance %i
 After=network.target
 
 [Service]
 Type=simple
-User=%i
+#User=tunnel
 WorkingDirectory=/volume1/homes/tunnel
 Environment=DEBUG=true
-ExecStart=/volume1/homes/tunnel/tunnel.sh
+EnvironmentFile=/volume1/homes/tunnel/tunnel.env
+ExecStart=/bin/su -s /bin/sh -c '/volume1/homes/%i/ssh_tunnel.sh' tunnel
 Restart=always
 RestartSec=10
 StandardOutput=journal

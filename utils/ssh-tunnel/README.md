@@ -17,7 +17,8 @@
 - разместить `tunnel.sh` в `/volume1/homes/tunnel`
 - разместить `ssh-tunnel@.service` в `/usr/lib/systemd/system/ssh-tunnel@.service`
 - `sudo systemctl daemon-reload`
-- `sudo systemctl enable ssh-tunnel@tunnel.service`
-- `sudo systemctl start ssh-tunnel@tunnel.service`
-- `sudo systemctl status ssh-tunnel@tunnel.service`
-- логи в `sudo journalctl -u ssh-tunnel@tunnel.service -b`
+- `sudo systemctl enable ssh-tunnel@your-instance.service`
+- `sudo systemctl start ssh-tunnel@your-instance.service`
+- `sudo systemctl status ssh-tunnel@your-instance.service`
+- логи в `sudo journalctl -u ssh-tunnel@your-instance.service -f`
+- для запуска нескольких именуй переменные в tunnel.env `${your-instance}_TUNNEL` и `${your-instance}_CONNECTION`
