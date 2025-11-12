@@ -36,7 +36,7 @@ services:
       SMTP_HOST:
       SMTP_USERNAME:
       SMTP_PASSWORD:
-      NEXT_PUBLIC_EMAIL_PROVIDER: "false"
+      NEXT_PUBLIC_EMAIL_PROVIDER: false
       EMAIL_FROM: "klub.top@yandex.ru"
       EMAIL_SERVER: "smtps://${SMTP_USERNAME}:${SMTP_PASSWORD}@${SMTP_HOST}:465"
       # Limits
