@@ -32,7 +32,7 @@ services:
       SPACES_REGION: "us-east-1"
       SPACES_FORCE_PATH_STYLE: "true"
       # SMTP
-      BASE_URL: "${SCHEMA}://${ACME_HOSTNAME}"
+      BASE_URL: "${SCHEMA}://${ROUTE_HOSTNAME}"
       SMTP_HOST:
       SMTP_USERNAME:
       SMTP_PASSWORD:
