@@ -40,7 +40,7 @@ services:
 #      EMAIL_FROM: "klub.top@yandex.ru"
 #      EMAIL_SERVER: "smtps://${SMTP_USERNAME}:${SMTP_PASSWORD}@${SMTP_HOST}:465"
       # Limits
-      MAX_LINKS_PER_USER: 100 # 1Gb per user
+      MAX_LINKS_PER_USER: 1000 # 10Gb per user
       RSS_SUBSCRIPTION_LIMIT_PER_USER: 5
         
     labels:
