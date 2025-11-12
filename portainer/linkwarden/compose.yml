@@ -37,8 +37,8 @@ services:
       SMTP_USERNAME:
       SMTP_PASSWORD:
 #      NEXT_PUBLIC_EMAIL_PROVIDER: false
-      EMAIL_FROM: "klub.top@yandex.ru"
-      EMAIL_SERVER: "smtps://${SMTP_USERNAME}:${SMTP_PASSWORD}@${SMTP_HOST}:465"
+#      EMAIL_FROM: "klub.top@yandex.ru"
+#      EMAIL_SERVER: "smtps://${SMTP_USERNAME}:${SMTP_PASSWORD}@${SMTP_HOST}:465"
       # Limits
       MAX_LINKS_PER_USER: 100 # 1Gb per user
       RSS_SUBSCRIPTION_LIMIT_PER_USER: 5
