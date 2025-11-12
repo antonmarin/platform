@@ -4,7 +4,7 @@ on: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-wor
     - cron: "15 */4 * * *"
 #  push: # uncomment to test
 jobs:
-  update-utils:
+  test-vw:
     name: Test restoring backups
     runs-on: ubuntu-latest
     if: ${{ github.ref_name == 'master' }}
@@ -22,7 +22,28 @@ jobs:
           RCLONE_CONFIG_REMOTE_ENDPOINT: ${{ secrets.VW_BACKUP_ENDPOINT }}
           RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID: ${{ secrets.VW_BACKUP_KEY_ID }}
           RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY: ${{ secrets.VW_BACKUP_SECRET }}
+  test-port:
+    name: Test restoring backups
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'master' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4 # https://github.com/actions/checkout
       - name: test-port
+        run: make test-restore-port
+        env:
+          BACKUP_PATH: ${{ vars.PORT_BACKUP_PATH }}
+          RCLONE_CONFIG_REMOTE_ENDPOINT: ${{ secrets.VW_BACKUP_ENDPOINT }}
+          RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID: ${{ secrets.VW_BACKUP_KEY_ID }}
+          RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY: ${{ secrets.VW_BACKUP_SECRET }}
+  test-lw:
+    name: Test restoring backups
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'master' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4 # https://github.com/actions/checkout
+      - name: test-lw
         run: make test-restore-port
         env:
           BACKUP_PATH: ${{ vars.PORT_BACKUP_PATH }}

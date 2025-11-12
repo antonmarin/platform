@@ -59,5 +59,9 @@ test-restore-vw:
 	docker compose -f portainer/vaultwarden/compose.yml down --remove-orphans || true
 	docker volume rm vaultwarden_database || true
 	docker compose -f portainer/vaultwarden/compose.yml run --remove-orphans backuper '/backuper/backuper.sh pg_restore latest "$$BACKUP_PATH"'
+test-restore-lw:
+	docker compose -f portainer/linkwarden/compose.yml down --remove-orphans || true
+	docker volume rm linkwarden_database || true
+	docker compose -f portainer/linkwarden/compose.yml run --remove-orphans backuper '/backuper/backuper.sh pg_restore latest "$$BACKUP_PATH"'
 test-restore-port:
 	docker compose -f portainer/portainer/compose.yml run --remove-orphans backuper '/backuper/backuper.sh dir_restore latest "$$BACKUP_PATH" /tmp/test'
