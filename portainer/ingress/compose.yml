@@ -6,7 +6,9 @@ services:
     image: traefik:3.5
     command:
       # Tells Traefik to listen to docker
+      - --providers.docker=true
       - --providers.docker.network=ingress
+      - --providers.docker.exposedByDefault=false
       # Enables the web UI
       - --api.insecure=${IS_WEB_UI_ENABLED}
       - --log.level=${LOG_LEVEL}
