@@ -50,7 +50,7 @@ services:
       SMTP_HOST:
       SMTP_USER:
       SMTP_PASSWORD: 
-      SMTP_FROM: "klub.top@yandex.ru"
+      SMTP_FROM: "КлубТоп"
       SMTP_PORT: 465
       SMTP_SECURE: true
     labels:
