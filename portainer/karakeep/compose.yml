@@ -1,0 +1,99 @@
+---
+version: '3.9'
+# https://docs.karakeep.app/Installation/docker/
+services:
+  server:
+    deploy:
+      replicas: ${APP_REPLICAS:-1}
+      #      resources:
+      #        reservations:
+      #          memory: 100M
+      #        limits:
+      #          memory: 1G
+    restart: unless-stopped
+    image: ghcr.io/karakeep-app/karakeep:release
+    environment:
+#      https://docs.karakeep.app/configuration/
+      SCHEMA:
+      IS_TLS_ENABLED:
+      ACME_HOSTNAME:
+      ROUTE_HOSTNAME:
+#      MEILI_MASTER_KEY:
+#      MEILI_ADDR: http://meilisearch:7700
+      BROWSER_WEB_URL: http://chrome:9222
+      # WORKERS_HOST: 0.0.0.0
+      OCR_LANGS: eng, rus
+      # auth
+      NEXTAUTH_SECRET:
+      NEXTAUTH_URL: "${SCHEMA}://${ROUTE_HOSTNAME}"
+      DISABLE_SIGNUPS: false
+      EMAIL_VERIFICATION_REQUIRED: true
+      # OAUTH_CLIENT_ID:
+      # OPENAI_API_KEY: ...
+      # storage
+      ASSET_STORE_S3_ENDPOINT:
+      ASSET_STORE_S3_BUCKET:
+      ASSET_STORE_S3_ACCESS_KEY_ID:
+      ASSET_STORE_S3_SECRET_ACCESS_KEY:
+      ASSET_STORE_S3_REGION: "us-east-1"
+      ASSET_STORE_S3_FORCE_PATH_STYLE: true
+      DATA_DIR: /data # volume mount point
+      DB_WAL_MODE: true
+      # limits
+      MAX_ASSET_SIZE_MB: 10
+      CRAWLER_STORE_SCREENSHOT: false
+      CRAWLER_FULL_PAGE_SCREENSHOT: false
+      CRAWLER_FULL_PAGE_ARCHIVE: false
+      CRAWLER_VIDEO_DOWNLOAD: false
+      CRAWLER_VIDEO_DOWNLOAD_MAX_SIZE: 50
+      #smtp
+      SMTP_HOST:
+      SMTP_USER:
+      SMTP_PASSWORD: 
+      SMTP_FROM: "klub.top@yandex.ru"
+      SMTP_PORT: 465
+      SMTP_SECURE: true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.karakeep.rule=Host(`${ROUTE_HOSTNAME}`)"
+      - "traefik.http.routers.karakeep.tls=${IS_TLS_ENABLED}"
+      - "traefik.http.routers.karakeep.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.karakeep.tls.domains[0].main=${ROUTE_HOSTNAME}"
+      - "traefik.http.routers.karakeep.tls.domains[0].sans[0]=${ACME_HOSTNAME}"
+    networks:
+      - ingress
+      - default
+    volumes:
+      - app:/data
+    healthcheck:
+      test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:3000" ]
+      interval: 30s
+      #      timeout: 3s
+      retries: 5
+      start_period: 1s
+  chrome:
+    image: gcr.io/zenika-hub/alpine-chrome:124
+    restart: unless-stopped
+    command:
+      - --no-sandbox
+      - --disable-gpu
+      - --disable-dev-shm-usage
+      - --remote-debugging-address=0.0.0.0
+      - --remote-debugging-port=9222
+      - --hide-scrollbars
+#  meilisearch:
+#    image: getmeili/meilisearch:v1.13.3
+#    restart: unless-stopped
+#    env_file:
+#      - .env
+#    environment:
+#      MEILI_NO_ANALYTICS: "true"
+#    volumes:
+#      - meilisearch:/meili_data
+
+volumes:
+#  meilisearch:
+  app:
+networks:
+  ingress:
+    name: "ingress"
