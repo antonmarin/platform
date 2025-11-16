@@ -5,7 +5,7 @@ on: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-wor
 #  push: # uncomment to test
 jobs:
   test-vw:
-    name: Test restoring backups
+    name: Test restoring Vaultwarden backups
     runs-on: ubuntu-latest
     if: ${{ github.ref_name == 'master' }}
     steps:
@@ -23,7 +23,7 @@ jobs:
           RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID: ${{ secrets.VW_BACKUP_KEY_ID }}
           RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY: ${{ secrets.VW_BACKUP_SECRET }}
   test-port:
-    name: Test restoring backups
+    name: Test restoring Portainer backups
     runs-on: ubuntu-latest
     if: ${{ github.ref_name == 'master' }}
     steps:
@@ -37,7 +37,7 @@ jobs:
           RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID: ${{ secrets.VW_BACKUP_KEY_ID }}
           RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY: ${{ secrets.VW_BACKUP_SECRET }}
   test-karakeep:
-    name: Test restoring backups
+    name: Test restoring Karakeep backups
     runs-on: ubuntu-latest
     if: ${{ github.ref_name == 'master' }}
     steps:
