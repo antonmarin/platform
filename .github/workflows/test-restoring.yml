@@ -46,6 +46,7 @@ jobs:
       - name: test-karakeep
         run: make test-restore-karakeep
         env:
+          GPG_PASSPHRASE: ${{ secrets.KARAKEEP_BACKUP_PASSPHRASE }}
           BACKUP_PATH: ${{ vars.KARAKEEP_BACKUP_PATH }}
           RCLONE_CONFIG_REMOTE_ENDPOINT: ${{ secrets.KARAKEEP_BACKUP_ENDPOINT }}
           RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID: ${{ secrets.KARAKEEP_BACKUP_KEY_ID }}
