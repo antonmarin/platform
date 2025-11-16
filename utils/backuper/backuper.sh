@@ -15,20 +15,24 @@ usage() {
 	cat <<EOF
 Backup util
 	To get usage guide: $0 <command> --help
-	Commands:
-	- pg_backup
-	- pg_restore
-	- dir_backup
-	- dir_restore
-	  utils:
-	- encrypt
-	- decrypt
-	- upload
-	- download
-Features:
-- Compress and encrypting
-- Upload to S3
-- Removes outdated backups
+
+	Supported sources commands:
+		PostgreSQL:
+		- pg_backup
+		- pg_restore
+		Directory (also docker volume):
+		- dir_backup
+		- dir_restore
+		SQLite:
+		- sqlite_backup
+		- sqlite_restore
+	Features commands:
+		Encrypting:
+		- encrypt
+		- decrypt
+		Uploading to S3 and rotating
+		- upload
+		- download
 EOF
 }
 
@@ -49,6 +53,8 @@ Backups directory to tar archive
 
 		GPG_PASSPHRASE*          Password phrase for encryption / decryption
 		RCLONE_REMOTE            Use rclone configuration. Uploads/downloads backup if set. (default: not set)
+		RETENTION                Delete files older than N
+		                         Int days count or rclone --min-age string https://rclone.org/docs/#time-options when RCLONE_REMOTE set
 EOF
 		return 0
 		;;
@@ -224,6 +230,95 @@ EOF
 
 	log '➜ Decrypting & restoring "%s" …\n' "$isolating_dest"
 	DEBUG=false decrypt "$isolating_dest" - | zcat | psql -h "$PGHOST" -p "$PGPORT" -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+	log '✔ Restore finished\n'
+
+	return 0
+}
+
+######################## SQLITE #######################
+
+TMP_DIR="${TMP_DIR:-/tmp}"
+sqlite_backup() {
+	dbFile="${1:---help}"
+	storageDir="${2:-}"
+	archive_filename=${3:-sqlite_$(date +%F_%H-%M).db.gz}
+
+	case "$dbFile" in
+	--help | -h)
+		cat <<EOF
+Backup sqlite database to tar archive
+	Usage: sqlite_backup DB_FILE STORAGE_DIR [ARCHIVE_FILENAME]
+
+	Environment variables (* - required):
+		TMP_DIR                  Directory to isolate archive (default: /tmp)
+
+		GPG_PASSPHRASE*          Password phrase for encryption
+		RCLONE_REMOTE            Use rclone configuration. Uploads/downloads backup if set. (default: not set)
+		RETENTION                Delete files older than N
+		                         Int days count or rclone --min-age string https://rclone.org/docs/#time-options when RCLONE_REMOTE set
+EOF
+		return 0
+		;;
+	esac
+
+	[ -n "$storageDir" ] || {
+		printf '❌ STORAGE_DIR not set\n' >&2
+		return 1
+	}
+
+	if ! command -v sqlite3 >/dev/null 2>&1; then
+		printf '❌ sqlite3 not found in PATH\n' >&2
+		return 1
+	fi
+
+	target="${TMP_DIR}/${archive_filename}"
+	log '➜ Dumping %s into %s …\n' "${dbFile}" "${target}"
+	sqlite3 "${dbFile}" ".backup main /tmp/backup" && gzip -c /tmp/backup >"$target"
+	log '✔ Backup created: %s\n' "${target}"
+
+	crypt="$target.gpg"
+	DEBUG=false encrypt "$target" "$crypt"
+	log '✔ Backup encrypted: %s\n' "$crypt"
+
+	DEBUG=false upload "$crypt" "${storageDir}"
+	log '✔ Backup uploaded to "%s"\n' "${storageDir}$crypt"
+
+	return 0
+}
+sqlite_restore() {
+	archive_filename=${1:---help}
+	storageDir="${2:-}"
+	dbFile="${3:-}"
+
+	case "$archive_filename" in
+	--help | -h)
+		cat <<EOF
+Restores sqlite database from tar archive
+	Usage: sqlite_restore <ARCHIVE_FILENAME|latest> STORAGE_DIR DB_FILE
+
+	Environment variables (* - required):
+		TMP_DIR                  Directory to isolate archive (default: /tmp)
+
+		GPG_PASSPHRASE*          Password phrase for decryption
+		RCLONE_REMOTE            Use rclone configuration. Uploads/downloads backup if set. (default: not set)
+EOF
+		return 0
+		;;
+	esac
+
+	[ -n "$storageDir" ] || {
+		printf '❌ STORAGE_DIR not set\n' >&2
+		return 1
+	}
+	[ -n "$dbFile" ] || {
+		printf '❌ DB_FILE not set\n' >&2
+		return 1
+	}
+
+	isolating_dest=$(DEBUG=false download "$storageDir" "$archive_filename" "$TMP_DIR")
+
+	log '➜ Decrypting & restoring "%s" …\n' "$isolating_dest"
+	DEBUG=false decrypt "$isolating_dest" - | zcat > "${dbFile}"
 	log '✔ Restore finished\n'
 
 	return 0
@@ -462,5 +557,7 @@ pg_backup) pg_backup "${2:-}" "${3:-}" ;;
 pg_restore) pg_restore "${2:-}" "${3:-}" ;;
 dir_backup) dir_backup "${2:-}" "${3:-}" "${4:-}" ;;
 dir_restore) dir_restore "${2:-}" "${3:-}" "${4:-}" ;;
+sqlite_backup) sqlite_backup "${2:-}" "${3:-}" "${4:-}";;
+sqlite_restore) sqlite_restore "${2:-}" "${3:-}" "${4:-}";;
 *) usage ;;
 esac

@@ -46,13 +46,7 @@ ssh:
 fwd-traefik:
 	ssh -NL 8080:localhost:8080 root@$(PLATFORM_SERVER_IP)
 
-fwd-portainer:
-	ssh -NL 9001:$(PLATFORM_SERVER_IP):9001 root@$(PLATFORM_SERVER_IP)
-
-fwd-docker:
-	ssh -NL 2375:127.0.0.1:2375 root@$(PLATFORM_SERVER_IP)
-
-update-utils:
+update-utils: #? update platform utils
 	docker buildx build --push --platform=linux/amd64,linux/arm64 -t antonmarin/backuper ./utils/backuper
 
 test-restore-vw:
@@ -65,3 +59,5 @@ test-restore-lw:
 	docker compose -f portainer/linkwarden/compose.yml run --remove-orphans backuper '/backuper/backuper.sh pg_restore latest "$$BACKUP_PATH"'
 test-restore-port:
 	docker compose -f portainer/portainer/compose.yml run --remove-orphans backuper '/backuper/backuper.sh dir_restore latest "$$BACKUP_PATH" /tmp/test'
+test-restore-karakeep:
+	docker compose -f portainer/karakeep/compose.yml run --remove-orphans backuper '/backuper/backuper.sh sqlite_restore latest "$$BACKUP_PATH" /data/db.db'

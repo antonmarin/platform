@@ -90,6 +90,32 @@ services:
 #      MEILI_NO_ANALYTICS: "true"
 #    volumes:
 #      - meilisearch:/meili_data
+  backuper:
+    deploy:
+      replicas: 1
+    #      resources:
+    #        reservations:
+    #          memory: 100M
+    #        limits:
+    #          memory: 1G
+    restart: always
+    image: antonmarin/backuper:latest # https://hub.docker.com/r/antonmarin/backuper
+    entrypoint: [ "/bin/sh", "-c" ]
+#    command: [ '/backuper/backuper.sh sqlite_backup /data/db.db ${BACKUP_PATH}' ]
+    command:
+      - "echo '07 */12 * * * /backuper/backuper.sh sqlite_backup /data/db.db ${BACKUP_PATH}' | crontab - && crond -L /dev/stdout -l4 -f"
+    environment:
+      DEBUG: "true"
+      GPG_PASSPHRASE:
+      BACKUP_PATH:
+      RCLONE_CONFIG_REMOTE_ENDPOINT:
+      RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID:
+      RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY:
+      TZ: Europe/Moscow
+      RCLONE_REMOTE: "remote"
+      RETENTION: "6M"
+    volumes:
+      - app:/data
 
 volumes:
 #  meilisearch:

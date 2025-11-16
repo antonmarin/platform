@@ -36,17 +36,31 @@ jobs:
           RCLONE_CONFIG_REMOTE_ENDPOINT: ${{ secrets.VW_BACKUP_ENDPOINT }}
           RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID: ${{ secrets.VW_BACKUP_KEY_ID }}
           RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY: ${{ secrets.VW_BACKUP_SECRET }}
-  test-lw:
+  test-karakeep:
     name: Test restoring backups
     runs-on: ubuntu-latest
     if: ${{ github.ref_name == 'master' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4 # https://github.com/actions/checkout
-      - name: test-lw
-        run: make test-restore-port
+      - name: test-karakeep
+        run: make test-restore-karakeep
         env:
-          BACKUP_PATH: ${{ vars.PORT_BACKUP_PATH }}
-          RCLONE_CONFIG_REMOTE_ENDPOINT: ${{ secrets.VW_BACKUP_ENDPOINT }}
-          RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID: ${{ secrets.VW_BACKUP_KEY_ID }}
-          RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY: ${{ secrets.VW_BACKUP_SECRET }}
+          BACKUP_PATH: ${{ vars.KARAKEEP_BACKUP_PATH }}
+          RCLONE_CONFIG_REMOTE_ENDPOINT: ${{ secrets.KARAKEEP_BACKUP_ENDPOINT }}
+          RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID: ${{ secrets.KARAKEEP_BACKUP_KEY_ID }}
+          RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY: ${{ secrets.KARAKEEP_BACKUP_SECRET }}
+#  test-lw:
+#    name: Test restoring backups
+#    runs-on: ubuntu-latest
+#    if: ${{ github.ref_name == 'master' }}
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4 # https://github.com/actions/checkout
+#      - name: test-lw
+#        run: make test-restore-port
+#        env:
+#          BACKUP_PATH: ${{ vars.PORT_BACKUP_PATH }}
+#          RCLONE_CONFIG_REMOTE_ENDPOINT: ${{ secrets.VW_BACKUP_ENDPOINT }}
+#          RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID: ${{ secrets.VW_BACKUP_KEY_ID }}
+#          RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY: ${{ secrets.VW_BACKUP_SECRET }}

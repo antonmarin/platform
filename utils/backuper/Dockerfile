@@ -6,7 +6,8 @@ RUN apk add --no-cache \
 	 curl \
      gnupg \
      findutils \
-	 rclone
+	 rclone \
+    sqlite
 
 RUN mkdir -p /root/.gnupg && chmod 700 /root/.gnupg && gpg --list-keys >/dev/null 2>&1 || true
 
