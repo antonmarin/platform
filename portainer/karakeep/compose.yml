@@ -46,6 +46,7 @@ services:
       CRAWLER_FULL_PAGE_ARCHIVE: false
       CRAWLER_VIDEO_DOWNLOAD: false
       CRAWLER_VIDEO_DOWNLOAD_MAX_SIZE: 50
+      NODE_OPTIONS: "--max-old-space-size=256"
       #smtp
       SMTP_HOST:
       SMTP_USER:
