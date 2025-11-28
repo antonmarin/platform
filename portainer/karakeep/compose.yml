@@ -10,7 +10,7 @@ services:
       #          memory: 100M
       #        limits:
       #          memory: 1G
-    restart: unless-stopped
+    restart: always
     image: ghcr.io/karakeep-app/karakeep:release
     environment:
 #      https://docs.karakeep.app/configuration/
@@ -18,8 +18,8 @@ services:
       IS_TLS_ENABLED:
       ACME_HOSTNAME:
       ROUTE_HOSTNAME:
-#      MEILI_MASTER_KEY:
-#      MEILI_ADDR: http://meilisearch:7700
+      MEILI_MASTER_KEY:
+      MEILI_ADDR: http://meilisearch:7700
       BROWSER_WEB_URL: http://chrome:9222
       # WORKERS_HOST: 0.0.0.0
       OCR_LANGS: eng, rus
@@ -46,7 +46,7 @@ services:
       CRAWLER_FULL_PAGE_ARCHIVE: false
       CRAWLER_VIDEO_DOWNLOAD: false
       CRAWLER_VIDEO_DOWNLOAD_MAX_SIZE: 50
-      NODE_OPTIONS: "--max-old-space-size=256"
+      NODE_OPTIONS: "--max-old-space-size=384" # in Mb
       #smtp
       SMTP_HOST:
       SMTP_USER:
@@ -82,13 +82,17 @@ services:
       - --remote-debugging-address=0.0.0.0
       - --remote-debugging-port=9222
       - --hide-scrollbars
-#  meilisearch:
-#    image: getmeili/meilisearch:v1.13.3
-#    restart: unless-stopped
-#    env_file:
-#      - .env
-#    environment:
-#      MEILI_NO_ANALYTICS: "true"
+  meilisearch:
+    image: getmeili/meilisearch:v1.27 # https://www.meilisearch.com/docs/guides/docker
+    restart: unless-stopped
+    environment: # https://www.meilisearch.com/docs/learn/self_hosted/configure_meilisearch_at_launch#environment-variable
+      MEILI_LOG_LEVEL:
+      MEILI_MASTER_KEY:
+      MEILI_NO_ANALYTICS: "true"
+      MEILI_DB_PATH: "/meili_data"
+      MEILI_ENV: "production"
+#      MEILI_MAX_INDEXING_MEMORY: ""
+#      MEILI_EXPERIMENTAL_REDUCE_INDEXING_MEMORY_USAGE: "true"
 #    volumes:
 #      - meilisearch:/meili_data
   backuper:
