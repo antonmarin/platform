@@ -2,12 +2,12 @@
 version: '3.9'
 
 services:
-  master: # coordinator
+  master:  # coordinator
     image: chrislusf/seaweedfs
     ports:
-      - 9333:9333 # coordinating api
-      - 19333:19333 # grpc?
-      - 9324:9324 # metrics
+      - 9333:9333  # coordinating api
+      - 19333:19333  # grpc?
+      - 9324:9324  # metrics
     command: "master -ip=nas.local -ip.bind=0.0.0.0 -metricsPort=9324"
     networks:
       - seaweed
