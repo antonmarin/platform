@@ -12,11 +12,14 @@
   `sudo chmod 700 /volume1/homes/tunnel/.ssh`
   `sudo chown tunnel:users /volume1/homes/tunnel/.ssh`
   `sudo -u tunnel ssh-keygen -t ed25519  -N ""`
-- Устанавливаем доступ по ключу на удаленный сервер
+- регаем ключ удаленного сервера знакомым
+  `sudo -u tunnel ssh user@remote.server.com ` and accept
+- Устанавливаем доступ по ключу на удаленный сервер вручную или
   `sudo -u tunnel ssh-copy-id -i /volume1/homes/tunnel/.ssh/id_ed25519.pub user@remote.server.com`
 - разместить `tunnel.sh` в `/volume1/homes/tunnel`
 - разместить `ssh-tunnel@.service` в `/usr/lib/systemd/system/ssh-tunnel@.service`
 - `sudo systemctl daemon-reload`
+- убедиться что на remote.server.com разрешен TcpForwarding скриптом `enable-ssh-tunnels.sh`
 - `sudo systemctl enable ssh-tunnel@your-instance.service`
 - `sudo systemctl start ssh-tunnel@your-instance.service`
 - `sudo systemctl status ssh-tunnel@your-instance.service`

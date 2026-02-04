@@ -11,7 +11,7 @@ provider "ruvds" {
 # }
 
 # Get a data center by its code
-data "ruvds_datacenter" "ttc" {
+data "ruvds_datacenter" "kz-ttc" {
   with_code = "TTC"
 }
 # output "datacenter_zur1" {
@@ -34,14 +34,7 @@ data "ruvds_os" "ubuntu" {
 #   value = data.ruvds_os.ubuntu_2204
 # }
 
-# resource "ruvds_vps" "my_vps" {
-#   datacenter_id  = data.ruvds_datacenter.ttc.id
-#   cpu = 1 # Cores
-#   ram = 1.0 # Gb
-#   drive = 20 # Gb
-#   os_id = data.ruvds_os.ubuntu_2204.id
-#   ip = 0
-#   drive_tariff_id = 1 #  1 - hdd, 3 - ssd, 10 eu ssd
-#   tariff_id = 14 # 40 for eu, 22 promo, 14(2.2GHz), 15(3.4GHz), 21 huge
-#   payment_period = 2 # 1 - тестовый период, 2 - 1 месяц, 3 - 3 месяца, 4 - 6 месяцев, 5 - 1 год
-# }
+resource "ruvds_ssh" "my_key" {
+  name = "tony book"
+  # public_key = "ssh-ed25519 AAAAC**...." place real here
+}
