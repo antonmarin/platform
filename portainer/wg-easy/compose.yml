@@ -16,8 +16,8 @@ services:
     volumes:
       - etc_wireguard:/etc/wireguard
     ports:
-      - "51827:51820/udp"
-      - "51828:51821/tcp"
+      - "51827:51827/udp"
+      - "51828:51828/tcp"
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
