@@ -44,7 +44,7 @@ format: #? format terraform files
 .terraform:
 	terraform init
 
-init: .env /usr/local/bin/terraform .terraform
+init: .env /usr/local/bin/terraform .terraform #? also after adding provider
 
 lint: lint-terraform lint-yaml #? pre-run validations
 lint-terraform:

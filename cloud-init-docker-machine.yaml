@@ -9,6 +9,12 @@
 #  - gnupg
 #  - lsb-release
 #
+ssh_pwauth: false
+ssh_authorized_keys:
+%{ for key in ssh_keys ~}
+  - ${key}
+%{ endfor ~}
+
 groups:
   - docker
 
@@ -34,6 +40,23 @@ write_files:
       # (systemd объединяет/перезаписывает по правилам)
       ExecStart=
       ExecStart=/usr/bin/dockerd --containerd=/run/containerd/containerd.sock
+  - path: /etc/ssh/sshd_config.d/50-port-forwarding.conf
+    content: |
+      # Enable TCP forwarding for SSH tunnels
+      AllowTcpForwarding yes
+      
+      # Allow remote hosts to connect to forwarded ports
+      # yes = bind to all interfaces (0.0.0.0)
+      # clientspecified = bind to specific address requested by client
+      # no = only localhost binding (default)
+      GatewayPorts yes
+      
+      # Optional: restrict to specific users
+      # Match User tunnel-user
+      #     AllowTcpForwarding yes
+      #     GatewayPorts yes
+    permissions: '0644'
+    owner: root:root
 
 output: 
   all: '/var/log/cloud-init.log'

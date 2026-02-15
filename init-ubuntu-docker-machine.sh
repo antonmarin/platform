@@ -31,5 +31,10 @@ ExecStart=
 ExecStart=/usr/bin/dockerd --containerd=/run/containerd/containerd.sock
 EOF
 
+sudo sed -i '/^[#]\?AllowTcpForwarding/c\AllowTcpForwarding yes' /etc/ssh/sshd_config
+sudo sed -i '/^[#]\?GatewayPorts/c\GatewayPorts yes' /etc/ssh/sshd_config
+sshd -T | grep -E "allowtcpforwarding|gatewayports"
+
 sudo systemctl daemon-reload
 sudo systemctl restart docker
+

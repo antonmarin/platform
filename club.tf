@@ -4,36 +4,57 @@ resource "twc_project" "club" {
 }
 
 resource "twc_vpc" "club-ru" {
-  name        = "Club RU network"
-  subnet_v4   = "192.168.0.0/24"
-  location    = "ru-1"
+  name      = "Club RU network"
+  subnet_v4 = "192.168.0.0/24"
+  location  = "ru-1"
 }
 
-resource "twc_vpc" "club-nl" {
-  name        = "Club NL network"
-  subnet_v4   = "192.168.0.0/24"
-  location    = "nl-1"
+resource "openstack_compute_instance_v2" "docker-machine1" {
+  name = "Docker machine test"
+  // тариф и локация
+  flavor_name = data.openstack_compute_flavor_v2.hostvds-1.name
+  metadata    = local.burstable-50-05Tb
+  region      = data.openstack_networking_network_v2.eu-north1b-Internet-07.region
+  network {
+    name = data.openstack_networking_network_v2.eu-north1b-Internet-07.name
+  }
+
+  // provision
+  image_name = data.openstack_images_image_v2.ubuntu-2404.name
+  user_data = templatefile("cloud-init-docker-machine.yaml", {
+    ssh_keys = [
+      var.ssh_public_key_provision,
+      var.ssh_public_key_tunnel
+    ]
+  })
+  security_groups = [data.openstack_networking_secgroup_v2.allow_all.name]
+}
+output "dm1-ssh" {
+  value = "ssh root@${openstack_compute_instance_v2.docker-machine1.access_ip_v4}"
 }
 
-# resource "twc_server" "vpn-nl" {
-#   name         = "NL VPN"
-#   os_id        = data.twc_os.ubuntu.id
-#   preset_id = data.twc_presets.minimal.id
-#   cloud_init = templatefile("cloud-init-docker-machine.yaml", {})
-#   project_id = twc_project.club.id
-#   local_network {
-#     id = twc_vpc.club-nl.id
-#   }
-# }
+# region docke-machine-2
+resource "openstack_compute_instance_v2" "docker-machine2" {
+  name = "Docker machine 2"
+  // тариф и локация
+  flavor_name = data.openstack_compute_flavor_v2.hostvds-1.name
+  metadata    = local.burstable-50-05Tb
+  region      = data.openstack_networking_network_v2.eu-north1b-Internet-06.region
+  network {
+    name = data.openstack_networking_network_v2.eu-north1b-Internet-06.name
+  }
 
-resource "ruvds_vps" "my_vps" {
-  payment_period = 2 # 1 - тестовый период, 2 - 1 месяц, 3 - 3 месяца, 4 - 6 месяцев, 5 - 1 год
-  datacenter_id  = data.ruvds_datacenter.kz-ttc.id
-  os_id = data.ruvds_os.ubuntu.id
-  cpu = 1 # Cores
-  ram = 1.0 # Gb
-  drive = 20 # Gb
-  drive_tariff_id = 1 #  1 - hdd, 3 - ssd, 10 eu ssd
-  tariff_id = 14 # 40 for eu, 22 promo, 14(2.2GHz), 15(3.4GHz), 21 huge
-  ip = 1 // should be gt 0
+  // provision
+  image_name = data.openstack_images_image_v2.ubuntu-2404.name
+  user_data = templatefile("cloud-init-docker-machine.yaml", {
+    ssh_keys = [
+      var.ssh_public_key_provision,
+      var.ssh_public_key_tunnel
+    ]
+  })
+  security_groups = [data.openstack_networking_secgroup_v2.allow_all.name]
 }
+output "dm2-ssh" {
+  value = "ssh root@${openstack_compute_instance_v2.docker-machine2.access_ip_v4}"
+}
+# endregion
