@@ -1,0 +1,32 @@
+---
+version: '3.9'
+
+services:
+  3x-ui:
+    # https://github.com/MHSanaei/3x-ui/wiki/Installation
+    image: bigbugcc/3x-ui:v2.8.10
+    container_name: 3x-ui
+    restart: unless-stopped
+    # admin:admin by defaul
+    # https://github.com/MHSanaei/3x-ui/wiki/Configuration
+    environment:
+      - TZ=Etc/UTC
+      - XRAY_VMESS_AEAD_FORCED=false
+    volumes:
+      - db:/etc/x-ui
+      - cert:/root/cert
+    ports:
+      - "2053:2053"      # Web UI HTTPS
+      - "2096:2096"      # Web UI HTTP
+      - "443:443"        # Xray VMess/VLESS/Trojan
+      - "80:80"          # HTTP fallback/Xray
+    # Additional inbound ports (add as needed)
+    # - "1080:1080"      # SOCKS proxy
+    # - "8080:8080"      # HTTP proxy
+    # config in /app/bin/config.json
+volumes:
+  db:
+  cert:
+
+# client from https://v2raytun.com
+# set warp endpoint to 162.159.192.(1-5)
