@@ -9,14 +9,14 @@ resource "twc_vpc" "club-ru" {
   location  = "ru-1"
 }
 
-resource "openstack_compute_instance_v2" "docker-machine1" {
+resource "openstack_compute_instance_v2" "test" {
   name = "Docker machine test"
   // тариф и локация
   flavor_name = data.openstack_compute_flavor_v2.hostvds-1.name
   metadata    = local.burstable-50-05Tb
-  region      = data.openstack_networking_network_v2.eu-north1b-Internet-07.region
+  region      = data.openstack_networking_network_v2.eu-north2-Internet-01.region
   network {
-    name = data.openstack_networking_network_v2.eu-north1b-Internet-07.name
+    name = data.openstack_networking_network_v2.eu-north2-Internet-01.name
   }
 
   // provision
@@ -30,10 +30,10 @@ resource "openstack_compute_instance_v2" "docker-machine1" {
   security_groups = [data.openstack_networking_secgroup_v2.allow_all.name]
 }
 output "dm1-ssh" {
-  value = "ssh root@${openstack_compute_instance_v2.docker-machine1.access_ip_v4}"
+  value = "ssh root@${openstack_compute_instance_v2.test.access_ip_v4}"
 }
 
-# region docke-machine-2
+# region docker-machine-2
 resource "openstack_compute_instance_v2" "docker-machine2" {
   name = "Docker machine 2"
   // тариф и локация
@@ -57,4 +57,7 @@ resource "openstack_compute_instance_v2" "docker-machine2" {
 output "dm2-ssh" {
   value = "ssh root@${openstack_compute_instance_v2.docker-machine2.access_ip_v4}"
 }
+# endregion
+
+# region beget-test
 # endregion
