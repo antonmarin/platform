@@ -1,0 +1,25 @@
+---
+version: '3.9'
+
+services:
+  # docker run -d -p443:443 -v proxy-config:/data -e SECRET=00baadf00d15abad1deaa51sbaadcafe -e WORKERS=2 telegrammessenger/proxy:latest
+  # Stats: docker exec mtproto-proxy curl http://localhost:2398/stats
+  # -ready_targets: number of Telegram core servers the proxy will try to connect to.
+  # -active_targets: number of Telegram core servers the proxy is actually connected to. Should be equal to ready_targets.
+  # -total_special_connections: number of inbound client connections
+  # -total_max_special_connections: the upper limit on inbound connections. Is equal to 60000 multiplied by worker count.
+  mtproto:
+    image: "telegrammessenger/proxy:1.4"
+    deploy:
+      replicas: 1
+    ports:
+      - "443:443"
+#    volumes:
+#      - config:/data
+    environment:
+#      SECRET: "00baadf00d15abad1deaa51sbaadcafe" # SECRET, UP TO 16
+#      SECRET_COUNT=4 # count for generate, UP TO 16
+      WORKERS: 2
+
+#volumes:
+#  config:
