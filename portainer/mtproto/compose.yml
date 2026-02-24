@@ -17,7 +17,7 @@ services:
 #    volumes:
 #      - config:/data
     environment:
-#      SECRET: "00baadf00d15abad1deaa51sbaadcafe" # SECRET, UP TO 16
+      SECRET: # SECRET, UP TO 16
 #      SECRET_COUNT=4 # count for generate, UP TO 16
       WORKERS: 2
 
