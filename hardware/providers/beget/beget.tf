@@ -1,3 +1,8 @@
+provider "beget" {
+  # https://developer.beget.com/#post-/v1/auth
+  token = ""
+}
+
 # resource "beget_ssh_key" "provisioner" {
 #   name = "provisioner"
 #   public_key = var.ssh_public_key_provision

@@ -19,7 +19,3 @@ provider "openstack" {
   auth_url         = "https://os-api.hostvds.com/identity/v3"
   user_domain_name = "Default"
 }
-provider "beget" {
-  # https://developer.beget.com/#post-/v1/auth
-  token = ""
-}
