@@ -17,7 +17,7 @@ services:
 #    volumes:
 #      - config:/data
     environment:
-      SECRET: # SECRET, UP TO 16
+      SECRET: # SECRET, UP TO 16. head -c 16 /dev/urandom | xxd -ps
 #      SECRET_COUNT=4 # count for generate, UP TO 16
       WORKERS: 2
 
