@@ -1,0 +1,396 @@
+name: existing
+runtime: yaml
+description: Configure existing server via SSH
+
+components: # https://www.pulumi.com/docs/iac/languages-sdks/yaml/yaml-component-reference/
+  Curl:
+    inputs: # one or more input values
+      serverIp:
+        type: string
+        description: "IP of existing VPS to configure"
+      sshPrivateKey:
+        type: string
+        secret: true
+        description: "Private key content"
+      sshPrivateKeyPass:
+        type: string
+        secret: true
+        default: ""
+        description: "Private key unlock password"
+      sshUser:
+        type: string
+        default: root
+        description: "Remote ssh user"
+    
+    variables:      # intermediate variable definitions
+      conn: # https://www.pulumi.com/registry/packages/command/api-docs/remote/command/#connection
+        host: ${serverIp}
+        user: ${sshUser}
+        privateKey: ${sshPrivateKey}
+        privateKeyPassword: ${sshPrivateKeyPass}
+    
+    resources: # one or more sub-resource definitions
+      welcome:
+        type: command:local:Command
+        properties:
+          create: echo "Installing Curl to ${conn.user}@${conn.host}"
+      install:
+        type: command:remote:Command
+        properties:
+          connection: ${conn}
+          create: apt update && apt -y install ca-certificates gnupg curl
+      man:
+        type: command:remote:Command
+        options:
+          dependsOn: 
+            - ${install}
+        properties:
+          connection: ${conn}
+          create: curl --help
+    outputs: # one or more output values
+      help: "${man.stdout}"
+  
+  
+  DockerMachine:
+    inputs: # one or more input values
+      serverIp:
+        type: string
+        description: "IP of existing VPS to configure"
+      sshPrivateKey:
+        type: string
+        secret: true
+        description: "Private key content"
+      sshPrivateKeyPass:
+        type: string
+        secret: true
+        default: ""
+        description: "Private key unlock password"
+      sshUser:
+        type: string
+        default: root
+        description: "Remote ssh user"
+        
+    variables:
+      conn: # https://www.pulumi.com/registry/packages/command/api-docs/remote/command/#connection
+        host: ${serverIp}
+        user: ${sshUser}
+        privateKey: ${sshPrivateKey}
+        privateKeyPassword: ${sshPrivateKeyPass}
+        
+    resources:
+      welcome:
+        type: command:local:Command
+        properties:
+          create: echo "Installing DockerMachine to ${conn.user}@${conn.host}"
+      install:
+        type: command:remote:Command
+        properties:
+          connection: ${conn}
+          create: |
+            #!/usr/bin/env sh
+            set -eu
+            
+            # Add GPG key
+            install -m 0755 -d /etc/apt/keyrings
+            curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+            chmod a+r /etc/apt/keyrings/docker.asc
+            
+            # Add repository
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+            
+            apt update
+            apt -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+            
+            mkdir -p /etc/docker
+            tee /etc/docker/daemon.json > /dev/null <<EOF
+            {
+              "hosts": ["unix:///var/run/docker.sock", "tcp://127.0.0.1:2375"]
+            }
+            EOF
+            
+            mkdir -p /etc/systemd/system/docker.service.d
+            tee /etc/systemd/system/docker.service.d/override.conf > /dev/null <<EOF
+            [Service]
+            # дополнить/заменить параметры запуска
+            # (systemd объединяет/перезаписывает по правилам)
+            ExecStart=
+            ExecStart=/usr/bin/dockerd --containerd=/run/containerd/containerd.sock
+            EOF
+            
+            systemctl daemon-reload
+            systemctl restart docker
+      info:
+        type: command:remote:Command
+        properties:
+          connection: ${conn}
+          create: docker info
+    outputs:
+      info: ${info.stdout}
+  
+  
+  DisablePasswordAuth:
+    inputs: # one or more input values
+      serverIp:
+        type: string
+        description: "IP of existing VPS to configure"
+      sshPrivateKey:
+        type: string
+        secret: true
+        description: "Private key content"
+      sshPrivateKeyPass:
+        type: string
+        secret: true
+        default: ""
+        description: "Private key unlock password"
+      sshUser:
+        type: string
+        default: root
+        description: "Remote ssh user"
+
+    variables: # intermediate variable definitions
+      conn: # https://www.pulumi.com/registry/packages/command/api-docs/remote/command/#connection
+        host: ${serverIp}
+        user: ${sshUser}
+        privateKey: ${sshPrivateKey}
+        privateKeyPassword: ${sshPrivateKeyPass}
+
+    resources:
+      setup:
+        type: command:remote:Command
+        properties:
+          connection: ${conn}
+          create: |
+            #!/usr/bin/env sh
+            set -eu
+            
+            mkdir -p /etc/ssh/sshd_config.d/
+            tee /etc/ssh/sshd_config.d/99-security.conf > /dev/null <<EOF
+            PasswordAuthentication no
+            EOF
+            
+            service ssh restart
+      status:
+        type: command:remote:Command
+        options:
+          dependsOn:
+            - ${setup}
+        properties:
+          connection: ${conn}
+          triggers:
+            - any
+          create: sshd -T | grep -E "passwordauthentication"
+    outputs:
+      status: "${status.stdout}"
+      
+  
+  
+  EnableForwarding:
+    inputs: # one or more input values
+      serverIp:
+        type: string
+        description: "IP of existing VPS to configure"
+      sshPrivateKey:
+        type: string
+        secret: true
+        description: "Private key content"
+      sshPrivateKeyPass:
+        type: string
+        secret: true
+        default: ""
+        description: "Private key unlock password"
+      sshUser:
+        type: string
+        default: root
+        description: "Remote ssh user"
+
+    variables: # intermediate variable definitions
+      conn: # https://www.pulumi.com/registry/packages/command/api-docs/remote/command/#connection
+        host: ${serverIp}
+        user: ${sshUser}
+        privateKey: ${sshPrivateKey}
+        privateKeyPassword: ${sshPrivateKeyPass}
+    
+    resources:
+      setup:
+        type: command:remote:Command
+        properties:
+          connection: ${conn}
+          create: |
+            #!/usr/bin/env sh
+            set -eu
+            
+            mkdir -p /etc/ssh/sshd_config.d/
+            tee /etc/ssh/sshd_config.d/50-enable-forwarding.conf > /dev/null <<EOF
+            AllowTcpForwarding yes
+            GatewayPorts yes
+            EOF
+            
+            service ssh restart
+      status:
+        type: command:remote:Command
+        options:
+          dependsOn:
+            - ${setup}
+        properties:
+          connection: ${conn}
+          triggers:
+            - any
+          create: sshd -T | grep -E "allowtcpforwarding|gatewayports"
+    outputs:
+      status: "${status.stdout}"
+
+
+  AuthorizeKey:
+    inputs:
+      serverAddr:
+        type: string
+        description: "IP of existing VPS to configure"
+      sshPrivateKey:
+        type: string
+        secret: true
+        description: "Private key content"
+      sshPrivateKeyPass:
+        type: string
+        secret: true
+        default: ""
+        description: "Private key unlock password"
+      sshUser:
+        type: string
+        default: root
+        description: "Remote ssh user"
+      newPublicKey:
+        type: string
+        description: "Public key to add to server"
+    
+    variables:
+      conn: # https://www.pulumi.com/registry/packages/command/api-docs/remote/command/#connection
+        host: ${serverAddr}
+        user: ${sshUser}
+        privateKey: ${sshPrivateKey}
+        privateKeyPassword: ${sshPrivateKeyPass}
+    
+    resources:
+      addkey:
+        type: command:remote:Command
+        properties:
+          connection: ${conn}
+          create: |
+            mkdir -p ~/.ssh && chmod 700 ~/.ssh
+
+            # Add key to authorized_keys (avoid duplicates)
+            if ! grep -q "${newPublicKey}" ~/.ssh/authorized_keys 2>/dev/null; then
+              echo "${newPublicKey}" >> ~/.ssh/authorized_keys
+              echo "Key added successfully"
+            else
+              echo "Key already exists"
+            fi
+
+            chmod 600 ~/.ssh/authorized_keys
+      status:
+        type: command:remote:Command
+        options:
+          dependsOn:
+            - ${addkey}
+        properties:
+          connection: ${conn}
+          create: echo "${addkey.stdout}. Current authorized $(cat ~/.ssh/authorized_keys | wc -l) keys"
+    
+    outputs:
+      status: ${status.stdout}
+    
+
+
+  SetupTunnel:
+    inputs:
+      tunnelName:
+        type: string
+        description: "Name of tunnel. ${pulumi.stack} can by used"
+      tunnelConfigPath:
+        type: string
+        description: "Path to config file with tunnels variables"
+      serverAddr:
+        type: string
+        description: "IP of existing VPS to configure"
+      sshPort:
+        type: integer
+        description: "Ssh port to connect to server"
+      sshPrivateKey:
+        type: string
+        secret: true
+        description: "Private key content"
+      sshPrivateKeyPass:
+        type: string
+        secret: true
+        default: ""
+        description: "Private key unlock password"
+      sshUser:
+        type: string
+        default: root
+        description: "Remote ssh user"
+      targetServerAddr:
+        type: string
+        description: "Address of server tunnel target to"
+      controllerUserName:
+        type: string
+        description: "Name of owner of tunnel"
+      controllerUserPass:
+        type: string
+        secret: true
+        description: "Sudo password of owner user of tunnel"
+    
+    variables:
+      conn: # https://www.pulumi.com/registry/packages/command/api-docs/remote/command/#connection
+        host: ${serverAddr}
+        port: ${sshPort}
+        user: ${sshUser}
+        privateKey: ${sshPrivateKey}
+        privateKeyPassword: ${sshPrivateKeyPass}
+      controllerPort: 
+    
+    resources:
+      getHostKey:
+        type: command:remote:Command
+        properties:
+          connection: ${conn}
+          create: /usr/local/bin/docker run -i --rm mountainash/openssh-client ssh-keyscan ${targetServerAddr}
+      storeHostKey:
+        type: command:remote:Command
+        options:
+          parent: ${getHostKey}
+        properties:
+          connection: ${conn}
+          create: |
+            #!/usr/bin/env sh
+            set -eu
+            
+            export PULUMI_COMMAND_STDOUT=$(echo "${controllerUserPass}" | sudo -Su tunnel ssh-keygen -R ${targetServerAddr})
+            echo "${controllerUserPass}" | sudo -Su tunnel bash -c "echo \"${getHostKey.stdout}\" | tee -a ~/.ssh/known_hosts > /dev/null"
+      addTunnel:
+        type: command:remote:Command
+        properties:
+          connection: ${conn}
+          create: |
+            #!/usr/bin/env sh
+            set -eu
+            
+            echo "${controllerUserPass}" | sudo -Su tunnel sed '/^${tunnelName}_/d' ${tunnelConfigPath}
+            TUNNELS_CNT=$(echo "${controllerUserPass}" | sudo -Su tunnel cat ${tunnelConfigPath} | wc -l )
+            export CONTROLLER_PORT=$((22400 + TUNNELS_CNT))
+            echo "${controllerUserPass}" | sudo -Su tunnel bash -c "echo \"${tunnelName}_TUNNEL=172.17.0.1:$CONTROLLER_PORT:127.0.0.1:2375\" | tee -a ${tunnelConfigPath} > /dev/null"
+            echo "${controllerUserPass}" | sudo -Su tunnel bash -c "echo \"${tunnelName}_CONNECTION=root@${targetServerAddr}\" | tee -a ${tunnelConfigPath} > /dev/null"
+            echo "${controllerUserPass}" | sudo -S systemctl enable ssh-tunnel@${tunnelName}.service
+            echo "${controllerUserPass}" | sudo -S systemctl start ssh-tunnel@${tunnelName}.service
+      statusService:
+        type: command:remote:Command
+        options:
+          dependsOn:
+            - ${storeHostKey}
+            - ${addTunnel}
+        properties:
+          connection: ${conn}
+          triggers:
+            - any
+          create: systemctl status ssh-tunnel@${tunnelName}.service
+    
+    outputs:
+      status: "${statusService.stdout}"

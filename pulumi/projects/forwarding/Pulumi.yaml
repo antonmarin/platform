@@ -1,0 +1,90 @@
+name: forwarding
+runtime: yaml
+description: "Provision existing VPS as forwarding docker-machine"
+packages:
+  existing: ../../components/existing/
+
+config:
+  serverIp:
+    type: string
+  sshPrivateKey:
+    type: string
+    secret: true
+  sshPrivateKeyPass:
+    type: string
+    secret: true
+    default: ""
+  sshUser:
+    type: string
+    default: root
+  machineControllerKey: # "Public ssh key to connect machine controller"
+    type: string
+  controllerUserName: # "Name of owner of tunnel"
+    type: string
+  controllerUserPass: # "Sudo password of owner user of tunnel"
+    type: string
+    secret: true
+
+resources:
+  curl:
+    type: existing:Curl
+    properties:
+      serverIp: ${serverIp}
+      sshUser: ${sshUser}
+      sshPrivateKey: ${sshPrivateKey}
+      sshPrivateKeyPass: ${sshPrivateKeyPass}
+  docker-machine:
+    type: existing:DockerMachine
+    options:
+      dependsOn:
+        - ${curl}
+    properties:
+      serverIp: ${serverIp}
+      sshUser: ${sshUser}
+      sshPrivateKey: ${sshPrivateKey}
+      sshPrivateKeyPass: ${sshPrivateKeyPass}
+  enable-forwarding:
+    type: existing:EnableForwarding
+    properties:
+      serverIp: ${serverIp}
+      sshUser: ${sshUser}
+      sshPrivateKey: ${sshPrivateKey}
+      sshPrivateKeyPass: ${sshPrivateKeyPass}
+  disable-password:
+    type: existing:DisablePasswordAuth
+    properties:
+      serverIp: ${serverIp}
+      sshUser: ${sshUser}
+      sshPrivateKey: ${sshPrivateKey}
+      sshPrivateKeyPass: ${sshPrivateKeyPass}
+  authorize-controller-key:
+    type: existing:AuthorizeKey
+    properties:
+      serverAddr: ${serverIp}
+      sshUser: ${sshUser}
+      sshPrivateKey: ${sshPrivateKey}
+      sshPrivateKeyPass: ${sshPrivateKeyPass}
+      newPublicKey: ${machineControllerKey}
+  tunnel-machine:
+    type: existing:SetupTunnel
+    options:
+      dependsOn:
+        - ${docker-machine}
+    properties:
+      tunnelName: ${pulumi.stack}
+      tunnelConfigPath: ${tunnelConfigPath}
+      targetServerAddr: ${serverIp}
+      serverAddr: ${controllerAddr}
+      sshUser: ${controllerConnectionUserName}
+      sshPort: ${controllerConnectionPort}
+      sshPrivateKey: ${sshPrivateKey}
+      sshPrivateKeyPass: ${sshPrivateKeyPass}
+      controllerUserName: ${controllerUserName}
+      controllerUserPass: ${controllerUserPass}
+
+outputs:
+  passauth: ${disable-password.status}
+  forwarding: ${enable-forwarding.status}
+  docker: ${docker-machine.info}
+  authkey: ${authorize-controller-key.status}
+  tunnel: ${tunnel-machine.status}
