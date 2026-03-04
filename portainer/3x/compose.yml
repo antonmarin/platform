@@ -10,8 +10,9 @@ services:
     # admin:admin by defaul
     # https://github.com/MHSanaei/3x-ui/wiki/Configuration
     environment:
-      - TZ=Etc/UTC
-      - XRAY_VMESS_AEAD_FORCED=false
+      TZ: "Etc/UTC"
+      XRAY_VMESS_AEAD_FORCED: "false"
+      XUI_DB_FOLDER: "/etc/x-ui"
     volumes:
       - db:/etc/x-ui
       - cert:/root/cert
@@ -29,4 +30,7 @@ volumes:
   cert:
 
 # client from https://v2raytun.com
-# set warp endpoint to 162.159.192.(1-5)
+# change account pass
+# xray -> outgoing -> add warp+create connection -> set warp endpoint to 162.159.192.(1-5)
+# xray -> routing -> add network tcp,udp; outbound tag warp
+# add connection -> proto vless; security Reality; target&sni rotate or set own
