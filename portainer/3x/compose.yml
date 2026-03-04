@@ -33,8 +33,7 @@ volumes:
 
 # client from https://v2raytun.com
 # change account pass, default admin/admin
-# xray -> outgoing -> add warp+create connection -> set warp endpoint to result of `nslookup engage.cloudflareclient.com`
 # xray -> basic -> ensure bittorent blocked
-# xray -> routing -> add network tcp,udp; outbound tag warp
+# xray -> outgoing -> add warp+create connection -> set warp endpoint to result of `nslookup engage.cloudflareclient.com` -> # xray -> routing -> add network tcp,udp; outbound tag warp
 # xray -> routing -> add -> domain: ext:geosite_(IR/CN/RU).dat:(ir/cn/ru)-available-only-inside,regexp:.*\.ir$; outbound tag: blocked
 # add connection -> proto vless;port 443; security Reality; flow xtls-rprx-vision; target&sni rotate or set own; transport tcp(raw); uTLS not android -> Get New Cert + Sniffing
