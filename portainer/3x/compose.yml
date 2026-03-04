@@ -13,6 +13,8 @@ services:
       TZ: "Etc/UTC"
       XRAY_VMESS_AEAD_FORCED: "false"
       XUI_DB_FOLDER: "/etc/x-ui"
+    devices:
+      - /dev/net/tun:/dev/net/tun
     volumes:
       - db:/etc/x-ui
       - cert:/root/cert
@@ -30,7 +32,9 @@ volumes:
   cert:
 
 # client from https://v2raytun.com
-# change account pass
-# xray -> outgoing -> add warp+create connection -> set warp endpoint to 162.159.192.(1-5)
+# change account pass, default admin/admin
+# xray -> outgoing -> add warp+create connection -> set warp endpoint to result of `nslookup engage.cloudflareclient.com`
+# xray -> basic -> ensure bittorent blocked
 # xray -> routing -> add network tcp,udp; outbound tag warp
-# add connection -> proto vless; security Reality; target&sni rotate or set own
+# xray -> routing -> add -> domain: ext:geosite_(IR/CN/RU).dat:(ir/cn/ru)-available-only-inside,regexp:.*\.ir$; outbound tag: blocked
+# add connection -> proto vless;port 443; security Reality; flow xtls-rprx-vision; target&sni rotate or set own; transport tcp(raw); uTLS not android -> Get New Cert + Sniffing
