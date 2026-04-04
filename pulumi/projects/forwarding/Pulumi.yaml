@@ -87,4 +87,5 @@ outputs:
   forwarding: ${enable-forwarding.status}
   docker: ${docker-machine.info}
   authkey: ${authorize-controller-key.status}
-  tunnel: ${tunnel-machine.status}
+  tunnel: ${tunnel-machine.tunnel}
+  tunnelStatus: ${tunnel-machine.status}

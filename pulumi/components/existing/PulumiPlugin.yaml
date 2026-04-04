@@ -21,19 +21,13 @@ components: # https://www.pulumi.com/docs/iac/languages-sdks/yaml/yaml-component
         type: string
         default: root
         description: "Remote ssh user"
-    
     variables:      # intermediate variable definitions
       conn: # https://www.pulumi.com/registry/packages/command/api-docs/remote/command/#connection
         host: ${serverIp}
         user: ${sshUser}
         privateKey: ${sshPrivateKey}
         privateKeyPassword: ${sshPrivateKeyPass}
-    
     resources: # one or more sub-resource definitions
-      welcome:
-        type: command:local:Command
-        properties:
-          create: echo "Installing Curl to ${conn.user}@${conn.host}"
       install:
         type: command:remote:Command
         properties:
@@ -78,10 +72,6 @@ components: # https://www.pulumi.com/docs/iac/languages-sdks/yaml/yaml-component
         privateKeyPassword: ${sshPrivateKeyPass}
         
     resources:
-      welcome:
-        type: command:local:Command
-        properties:
-          create: echo "Installing DockerMachine to ${conn.user}@${conn.host}"
       install:
         type: command:remote:Command
         properties:
@@ -121,9 +111,12 @@ components: # https://www.pulumi.com/docs/iac/languages-sdks/yaml/yaml-component
             systemctl restart docker
       info:
         type: command:remote:Command
+        options:
+          dependsOn:
+            - ${install}
         properties:
           connection: ${conn}
-          create: docker info
+          create: date -Iseconds; docker info -f 'ServerVersion {{ .ServerVersion}}'
     outputs:
       info: ${info.stdout}
   
@@ -146,14 +139,12 @@ components: # https://www.pulumi.com/docs/iac/languages-sdks/yaml/yaml-component
         type: string
         default: root
         description: "Remote ssh user"
-
     variables: # intermediate variable definitions
       conn: # https://www.pulumi.com/registry/packages/command/api-docs/remote/command/#connection
         host: ${serverIp}
         user: ${sshUser}
         privateKey: ${sshPrivateKey}
         privateKeyPassword: ${sshPrivateKeyPass}
-
     resources:
       setup:
         type: command:remote:Command
@@ -164,7 +155,7 @@ components: # https://www.pulumi.com/docs/iac/languages-sdks/yaml/yaml-component
             set -eu
             
             mkdir -p /etc/ssh/sshd_config.d/
-            tee /etc/ssh/sshd_config.d/99-security.conf > /dev/null <<EOF
+            tee /etc/ssh/sshd_config.d/40-security.conf > /dev/null <<EOF
             PasswordAuthentication no
             EOF
             
@@ -176,9 +167,7 @@ components: # https://www.pulumi.com/docs/iac/languages-sdks/yaml/yaml-component
             - ${setup}
         properties:
           connection: ${conn}
-          triggers:
-            - any
-          create: sshd -T | grep -E "passwordauthentication"
+          create: date -Iseconds; sshd -T | grep -E "passwordauthentication"
     outputs:
       status: "${status.stdout}"
       
@@ -202,14 +191,12 @@ components: # https://www.pulumi.com/docs/iac/languages-sdks/yaml/yaml-component
         type: string
         default: root
         description: "Remote ssh user"
-
     variables: # intermediate variable definitions
       conn: # https://www.pulumi.com/registry/packages/command/api-docs/remote/command/#connection
         host: ${serverIp}
         user: ${sshUser}
         privateKey: ${sshPrivateKey}
         privateKeyPassword: ${sshPrivateKeyPass}
-    
     resources:
       setup:
         type: command:remote:Command
@@ -233,9 +220,7 @@ components: # https://www.pulumi.com/docs/iac/languages-sdks/yaml/yaml-component
             - ${setup}
         properties:
           connection: ${conn}
-          triggers:
-            - any
-          create: sshd -T | grep -E "allowtcpforwarding|gatewayports"
+          create: date -Iseconds; sshd -T | grep -E "allowtcpforwarding|gatewayports"
     outputs:
       status: "${status.stdout}"
 
@@ -261,14 +246,12 @@ components: # https://www.pulumi.com/docs/iac/languages-sdks/yaml/yaml-component
       newPublicKey:
         type: string
         description: "Public key to add to server"
-    
     variables:
       conn: # https://www.pulumi.com/registry/packages/command/api-docs/remote/command/#connection
         host: ${serverAddr}
         user: ${sshUser}
         privateKey: ${sshPrivateKey}
         privateKeyPassword: ${sshPrivateKeyPass}
-    
     resources:
       addkey:
         type: command:remote:Command
@@ -293,7 +276,7 @@ components: # https://www.pulumi.com/docs/iac/languages-sdks/yaml/yaml-component
             - ${addkey}
         properties:
           connection: ${conn}
-          create: echo "${addkey.stdout}. Current authorized $(cat ~/.ssh/authorized_keys | wc -l) keys"
+          create: date -Iseconds; echo "${addkey.stdout}. Current authorized $(cat ~/.ssh/authorized_keys | wc -l) keys"
     
     outputs:
       status: ${status.stdout}
@@ -337,7 +320,6 @@ components: # https://www.pulumi.com/docs/iac/languages-sdks/yaml/yaml-component
         type: string
         secret: true
         description: "Sudo password of owner user of tunnel"
-    
     variables:
       conn: # https://www.pulumi.com/registry/packages/command/api-docs/remote/command/#connection
         host: ${serverAddr}
@@ -346,7 +328,6 @@ components: # https://www.pulumi.com/docs/iac/languages-sdks/yaml/yaml-component
         privateKey: ${sshPrivateKey}
         privateKeyPassword: ${sshPrivateKeyPass}
       controllerPort: 
-    
     resources:
       getHostKey:
         type: command:remote:Command
@@ -373,13 +354,14 @@ components: # https://www.pulumi.com/docs/iac/languages-sdks/yaml/yaml-component
             #!/usr/bin/env sh
             set -eu
             
-            echo "${controllerUserPass}" | sudo -Su tunnel sed '/^${tunnelName}_/d' ${tunnelConfigPath}
+            echo "${controllerUserPass}" | sudo -Su tunnel sed -i '/^${tunnelName}_/d' ${tunnelConfigPath}
             TUNNELS_CNT=$(echo "${controllerUserPass}" | sudo -Su tunnel cat ${tunnelConfigPath} | wc -l )
             export CONTROLLER_PORT=$((22400 + TUNNELS_CNT))
             echo "${controllerUserPass}" | sudo -Su tunnel bash -c "echo \"${tunnelName}_TUNNEL=172.17.0.1:$CONTROLLER_PORT:127.0.0.1:2375\" | tee -a ${tunnelConfigPath} > /dev/null"
             echo "${controllerUserPass}" | sudo -Su tunnel bash -c "echo \"${tunnelName}_CONNECTION=root@${targetServerAddr}\" | tee -a ${tunnelConfigPath} > /dev/null"
             echo "${controllerUserPass}" | sudo -S systemctl enable ssh-tunnel@${tunnelName}.service
             echo "${controllerUserPass}" | sudo -S systemctl start ssh-tunnel@${tunnelName}.service
+            echo "Tunnel available at host.docker.internal:$CONTROLLER_PORT"
       statusService:
         type: command:remote:Command
         options:
@@ -388,9 +370,8 @@ components: # https://www.pulumi.com/docs/iac/languages-sdks/yaml/yaml-component
             - ${addTunnel}
         properties:
           connection: ${conn}
-          triggers:
-            - any
-          create: systemctl status ssh-tunnel@${tunnelName}.service
+          create: sleep 3; systemctl status ssh-tunnel@${tunnelName}.service # fails "activating.."
     
     outputs:
+      tunnel: ${addTunnel.stdout}
       status: "${statusService.stdout}"
