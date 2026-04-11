@@ -32,7 +32,7 @@ services:
       #-e SYMFONY__ENV__REDIS_PASSWORD=... (defaults to "~", this is the password defined in the Redis server configuration)
       #-e SYMFONY__ENV__SENTRY_DSN=... (defaults to "~", this is the data source name for sentry)
     ports:
-      - "80:80"
+      - "4080:80"
     volumes:
       - images:/var/www/wallabag/web/assets/images
     depends_on:
@@ -78,8 +78,8 @@ services:
       POSTGRES_DB:
     volumes:
       - database:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+#    ports:
+#      - "5432:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
       interval: 10s
