@@ -1,0 +1,115 @@
+---
+version: '3.9'
+
+services:
+  wallabag:
+    image: wallabag/wallabag:2.6.14
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+      POSTGRES_DB:
+      SYMFONY__ENV__SECRET: 
+      SYMFONY__ENV__DOMAIN_NAME: http://localhost
+      SYMFONY__ENV__DATABASE_DRIVER: pdo_pgsql
+      POPULATE_DATABASE: True
+      SYMFONY__ENV__DATABASE_HOST: database
+      SYMFONY__ENV__DATABASE_PORT: 5432
+      SYMFONY__ENV__DATABASE_NAME: ${POSTGRES_DB}
+      SYMFONY__ENV__DATABASE_USER: ${POSTGRES_USER}
+      SYMFONY__ENV__DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+#      SYMFONY__ENV__DATABASE_CHARSET: utf8mb4
+      SYMFONY__ENV__DATABASE_TABLE_PREFIX: "wallabag_"
+      SYMFONY__ENV__MAILER_DSN: smtp://user:pass@host:465 # https://doc.wallabag.org/admin/mailer/
+      SYMFONY__ENV__FROM_EMAIL: "klub.top@yandex.ru"
+      SYMFONY__ENV__SERVER_NAME: "Your wallabag instance"
+      SYMFONY__ENV__LOCALE: ru
+      SYMFONY__ENV__FOSUSER_REGISTRATION: "false"
+      #-e SYMFONY__ENV__REDIS_SCHEME=... (defaults to "tcp", protocol to use to communicate with the target server (tcp, unix, or http))
+      #-e SYMFONY__ENV__REDIS_HOST=... (defaults to "redis", IP or hostname of the target server)
+      #-e SYMFONY__ENV__REDIS_PORT=... (defaults to "6379", port of the target host)
+      #-e SYMFONY__ENV__REDIS_PATH=...(defaults to "~", path of the unix socket file)
+      #-e SYMFONY__ENV__REDIS_PASSWORD=... (defaults to "~", this is the password defined in the Redis server configuration)
+      #-e SYMFONY__ENV__SENTRY_DSN=... (defaults to "~", this is the data source name for sentry)
+    ports:
+      - "80:80"
+    volumes:
+      - images:/var/www/wallabag/web/assets/images
+    depends_on:
+      - migrations
+#      - redis
+  
+  migrations:
+    image: wallabag/wallabag:2.6.14
+    restart: no
+    environment:
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+      POSTGRES_DB:
+      SYMFONY__ENV__SECRET:
+      SYMFONY__ENV__DOMAIN_NAME: http://localhost
+      SYMFONY__ENV__DATABASE_DRIVER: pdo_pgsql
+#      POPULATE_DATABASE: True
+      SYMFONY__ENV__DATABASE_HOST: database
+      SYMFONY__ENV__DATABASE_PORT: 5432
+      SYMFONY__ENV__DATABASE_NAME: ${POSTGRES_DB}
+      SYMFONY__ENV__DATABASE_USER: ${POSTGRES_USER}
+      SYMFONY__ENV__DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      #      SYMFONY__ENV__DATABASE_CHARSET: utf8mb4
+      SYMFONY__ENV__DATABASE_TABLE_PREFIX: "wallabag_"
+    depends_on:
+      - database
+    command: ["migrate"]
+
+  database:
+    deploy:
+      replicas: 1
+    #      resources:
+    #        reservations:
+    #          memory: 100M
+    #        limits:
+    #          memory: 1G
+    restart: unless-stopped
+    image: postgres:15-alpine
+    environment:
+      TZ: Europe/Moscow
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+      POSTGRES_DB:
+    volumes:
+      - database:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 10s
+      retries: 5
+  
+#  redis: # https://doc.wallabag.org/admin/asynchronous/#install-redis-for-asynchronous-tasks
+#    image: redis:alpine
+#    restart: unless-stopped
+#    healthcheck:
+#      test: ["CMD", "redis-cli", "ping"]
+#      interval: 20s
+#      timeout: 3s
+
+volumes:
+  database:
+  images:
+
+# bin/console fos:user:create --env=prod --super-admin {username} {email} {password}
+
+
+#https://doc.wallabag.org/admin/backup/
+# wallabag stores some basic parameters (like SMTP server or database backend) in the file app/config/parameters.yml. https://doc.wallabag.org/admin/parameters/
+# + pgbackup
+# The pictures retrieved by wallabag are stored under web/assets/images.
+
+# You can list all the commands by executing bin/console in the wallabag folder. https://doc.wallabag.org/admin/console_commands/
+# wallabag:clean-duplicates: Removes all entry duplicates for one user or all users.
+
+# https://doc.wallabag.org/admin/internal_settings/#enable-epub-export
+# https://doc.wallabag.org/admin/internal_settings/#enable-pdf-export
+# https://doc.wallabag.org/admin/internal_settings/#enable-redis
+# https://doc.wallabag.org/admin/internal_settings/#enable-demo-mode
+# https://doc.wallabag.org/admin/internal_settings/#download-images-locally
