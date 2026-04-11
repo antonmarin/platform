@@ -36,11 +36,11 @@ services:
       - default
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.karakeep.rule=Host(`${PUNYCODE_HOSTNAME}`)"
-      - "traefik.http.routers.karakeep.tls=${IS_TLS_ENABLED}"
-      - "traefik.http.routers.karakeep.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.karakeep.tls.domains[0].main=${PUNYCODE_HOSTNAME}"
-      - "traefik.http.routers.karakeep.tls.domains[0].sans[0]=${ACME_HOSTNAME}"
+      - "traefik.http.routers.wallabag.rule=Host(`${PUNYCODE_HOSTNAME}`)"
+      - "traefik.http.routers.wallabag.tls=${IS_TLS_ENABLED}"
+      - "traefik.http.routers.wallabag.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.wallabag.tls.domains[0].main=${PUNYCODE_HOSTNAME}"
+      - "traefik.http.routers.wallabag.tls.domains[0].sans[0]=${ACME_HOSTNAME}"
     healthcheck:
       test: [ "CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:80" ]
       interval: 30s
