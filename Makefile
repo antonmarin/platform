@@ -53,38 +53,19 @@ lint-terraform:
 lint-yaml: # https://yamllint.readthedocs.io/en/latest/rules.html
 	docker run --rm -v $(PWD):/platform -w /apps sdesbure/yamllint yamllint /platform/portainer/
 
-dirs:
-	@echo "$(COLOR_BLUE)Доступные ДЦ ruvds:$(COLOR_NONE)" && curl -sX GET \
-		-H "Content-Type: application/json" \
-		-H "Authorization: Bearer $(RUVDS_API_TOKEN)" \
-		https://api.ruvds.com/v2/datacenters | jq -r '.datacenters[].name'
-	@echo "$(COLOR_BLUE)Доступные ОС ruvds:$(COLOR_NONE)" && curl -sX GET \
-	   -H "Content-Type: application/json" \
-	   -H "Authorization: Bearer $(RUVDS_API_TOKEN)" \
-	   "https://api.ruvds.com/v2/os" | jq -r '.os[] | .type + " - " + .name'
-	@echo "$(COLOR_BLUE)Доступные тарифы ruvds:$(COLOR_NONE)" && curl -sX GET \
-	   -H "Content-Type: application/json" \
-	   -H "Authorization: Bearer $(RUVDS_API_TOKEN)" \
-	   "https://api.ruvds.com/v2/tariffs" | jq
-
-	@echo "$(COLOR_BLUE)Доступные локации twc:$(COLOR_NONE)" && curl -sX GET \
-      -H "Content-Type: application/json" \
-      -H "Authorization: Bearer $(TWC_TOKEN)" \
-      "https://api.timeweb.cloud/api/v2/locations" | jq
-
 plan: #? dry run infrastructure changes
 	terraform plan
 
 portainer-hash-password: #? hash admin password for portainer. used with --admin-password. in /run/secrets/portainer plain is used
 	@read -p "Enter new password: " password; \
 	htpasswd -nb -B admin $$password | cut -d ":" -f 2
-portainer-reset-password:
+portainer-reset-password: #? reset portainer admin password
 	docker run --rm -v "$(PWD)/portainer:/data" portainer/helper-reset-password
 
-run: #? start built in services locally
+up: #? start basic infra
 	cd portainer/ingress && docker compose up -d
 	cd portainer/s3 && docker compose up -d
-stop:
+down: #? stop basic infra
 	cd portainer/s3 && docker compose down --remove-orphans
 	cd portainer/ingress && docker compose down --remove-orphans
 
@@ -98,14 +79,20 @@ update-utils: #? update platform utils
 	docker buildx build --push --platform=linux/amd64,linux/arm64 -t antonmarin/backuper ./utils/backuper
 
 test-restore-vw:
-	docker compose -f portainer/vaultwarden/compose.yml down --remove-orphans || true
-	docker volume rm vaultwarden_database || true
-	docker compose -f portainer/vaultwarden/compose.yml run --remove-orphans backuper '/backuper/backuper.sh pg_restore latest "$$BACKUP_PATH"'
+	@make APP_NAME=vaultwarden test-restore-pg
 test-restore-lw:
-	docker compose -f portainer/linkwarden/compose.yml down --remove-orphans || true
-	docker volume rm linkwarden_database || true
-	docker compose -f portainer/linkwarden/compose.yml run --remove-orphans backuper '/backuper/backuper.sh pg_restore latest "$$BACKUP_PATH"'
+	@make APP_NAME=linkwarden test-restore-pg
 test-restore-port:
-	docker compose -f portainer/portainer/compose.yml run --remove-orphans backuper '/backuper/backuper.sh dir_restore latest "$$BACKUP_PATH" /tmp/test'
+	@make APP_NAME=portainer test-restore-dir
 test-restore-karakeep:
-	docker compose -f portainer/karakeep/compose.yml run --remove-orphans backuper '/backuper/backuper.sh sqlite_restore latest "$$BACKUP_PATH" /data/db.db'
+	@make APP_NAME=karakeep test-restore-sqlite
+test-restore-wallabag:
+	@make APP_NAME=linkwarden test-restore-pg
+test-restore-sqlite:
+	docker compose -f portainer/$(APP_NAME)/compose.yml run --remove-orphans backuper '/backuper/backuper.sh sqlite_restore latest "$$BACKUP_PATH" /data/db.db'
+test-restore-dir:
+	docker compose -f portainer/$(APP_NAME)/compose.yml run --remove-orphans backuper '/backuper/backuper.sh dir_restore latest "$$BACKUP_PATH" /tmp/test'
+test-restore-pg:
+	docker compose -f portainer/$(APP_NAME)/compose.yml down --remove-orphans || true
+	docker volume rm $(APP_NAME)_database || true
+	docker compose -f portainer/$(APP_NAME)/compose.yml run --remove-orphans backuper '/backuper/backuper.sh pg_restore latest "$$BACKUP_PATH"'
