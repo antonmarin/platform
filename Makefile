@@ -88,23 +88,21 @@ test-restore-karakeep:
 	@make APP_NAME=karakeep test-restore-sqlite
 test-restore-wallabag:
 	@make APP_NAME=linkwarden test-restore-pg
+
+define ensure_var_app_name
+app_name="$(strip $(APP_NAME))"; \
+if [ -z "$$app_name" ]; then \
+    read -p "Enter APP_NAME: " app_name; \
+fi;
+endef
 test-restore-sqlite:
-	@app_name="$(strip $(APP_NAME))"; \
-	if [ -z "$$app_name" ]; then \
-		read -p "Enter APP_NAME: " app_name; \
-	fi; \
+	@$(ensure_var_app_name) \
 	docker compose -f portainer/$$app_name/compose.yml run --remove-orphans backuper '/backuper/backuper.sh sqlite_restore latest "$$BACKUP_PATH" /data/db.db'
 test-restore-dir:
-	@app_name="$(strip $(APP_NAME))"; \
-	if [ -z "$$app_name" ]; then \
-		read -p "Enter APP_NAME: " app_name; \
-	fi; \
+	@$(ensure_var_app_name) \
 	docker compose -f portainer/$$app_name/compose.yml run --remove-orphans backuper '/backuper/backuper.sh dir_restore latest "$$BACKUP_PATH" /tmp/test'
 test-restore-pg:
-	@app_name="$(strip $(APP_NAME))"; \
-	if [ -z "$$app_name" ]; then \
-		read -p "Enter APP_NAME: " app_name; \
-	fi; \
+	@$(ensure_var_app_name) \
 	docker compose -f portainer/$$app_name/compose.yml down --remove-orphans || true; \
 	docker volume rm $${app_name}_database || true; \
 	docker compose -f portainer/$$app_name/compose.yml run --remove-orphans backuper '/backuper/backuper.sh pg_restore latest "$$BACKUP_PATH"'
