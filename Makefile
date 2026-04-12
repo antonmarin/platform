@@ -1,6 +1,6 @@
 SHELL = /bin/sh
 .DEFAULT_GOAL=help
-.PHONY: help
+.PHONY: help test-restore-sqlite test-restore-dir test-restore-pg
 GOOS=$(shell uname -s | tr '[:upper:]' '[:lower:]')
 -include .env
 export $(shell sed 's/=.*//' .env)
@@ -89,10 +89,22 @@ test-restore-karakeep:
 test-restore-wallabag:
 	@make APP_NAME=linkwarden test-restore-pg
 test-restore-sqlite:
-	docker compose -f portainer/$(APP_NAME)/compose.yml run --remove-orphans backuper '/backuper/backuper.sh sqlite_restore latest "$$BACKUP_PATH" /data/db.db'
+	@app_name="$(strip $(APP_NAME))"; \
+	if [ -z "$$app_name" ]; then \
+		read -p "Enter APP_NAME: " app_name; \
+	fi; \
+	docker compose -f portainer/$$app_name/compose.yml run --remove-orphans backuper '/backuper/backuper.sh sqlite_restore latest "$$BACKUP_PATH" /data/db.db'
 test-restore-dir:
-	docker compose -f portainer/$(APP_NAME)/compose.yml run --remove-orphans backuper '/backuper/backuper.sh dir_restore latest "$$BACKUP_PATH" /tmp/test'
+	@app_name="$(strip $(APP_NAME))"; \
+	if [ -z "$$app_name" ]; then \
+		read -p "Enter APP_NAME: " app_name; \
+	fi; \
+	docker compose -f portainer/$$app_name/compose.yml run --remove-orphans backuper '/backuper/backuper.sh dir_restore latest "$$BACKUP_PATH" /tmp/test'
 test-restore-pg:
-	docker compose -f portainer/$(APP_NAME)/compose.yml down --remove-orphans || true
-	docker volume rm $(APP_NAME)_database || true
-	docker compose -f portainer/$(APP_NAME)/compose.yml run --remove-orphans backuper '/backuper/backuper.sh pg_restore latest "$$BACKUP_PATH"'
+	@app_name="$(strip $(APP_NAME))"; \
+	if [ -z "$$app_name" ]; then \
+		read -p "Enter APP_NAME: " app_name; \
+	fi; \
+	docker compose -f portainer/$$app_name/compose.yml down --remove-orphans || true; \
+	docker volume rm $${app_name}_database || true; \
+	docker compose -f portainer/$$app_name/compose.yml run --remove-orphans backuper '/backuper/backuper.sh pg_restore latest "$$BACKUP_PATH"'
