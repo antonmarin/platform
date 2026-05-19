@@ -15,3 +15,7 @@ data "twc_os" "ubuntu" {
   name    = "ubuntu"
   version = "24.04"
 }
+data "twc_os" "alpine" {
+  name = "alpine"
+  version = "3.23"
+}

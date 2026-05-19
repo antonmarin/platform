@@ -23,20 +23,6 @@ provider "registry.terraform.io/terraform-provider-openstack/openstack" {
   ]
 }
 
-provider "tf.beget.com/beget/beget" {
-  version = "0.0.61"
-  hashes = [
-    "h1:0Il2JQ0doDo4uN3TqHUG7ClLUouhhWv3ztt/ZXoH/Sg=",
-    "zh:0802e830635cf33868126351121418642e1fd2ba41432973b141ae11bfc71dae",
-    "zh:890df766e9b839623b1f0437355032a3c006226a6c200cd911e15ee1a9014e9f",
-    "zh:ad86bf4bbf85b6a68f8e6d4a66d9042ac7815fa2c325b786ca9d1c3479853dd2",
-    "zh:bb089acf1b7da76d3d8b9f557067f48a7b803a53799dab6381e74480541b79ac",
-    "zh:c59fec70a5c40162647d2964fce0841a2da41b055f28c2d276275b82a6e02608",
-    "zh:c840bdb56c9dbf175581f2653e22fe95696aedb2cce5d31fab2a2f8f03f9b11c",
-    "zh:c9833d171e26de69b0fbe3bf0fac4af1668675f87e20c02cc7c27eea7a228eb9",
-  ]
-}
-
 provider "tf.timeweb.cloud/timeweb-cloud/timeweb-cloud" {
   version     = "1.6.7"
   constraints = "~> 1.6"
