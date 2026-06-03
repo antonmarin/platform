@@ -10,7 +10,7 @@ services:
 #        limits:
 #          memory: 1G
     restart: unless-stopped
-    image: vaultwarden/server:1.35.8-alpine
+    image: vaultwarden/server:1.36.0-alpine
     environment:
       # hosting
       SCHEMA:
