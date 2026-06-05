@@ -370,7 +370,7 @@ components: # https://www.pulumi.com/docs/iac/languages-sdks/yaml/yaml-component
             - ${addTunnel}
         properties:
           connection: ${conn}
-          create: sleep 3; systemctl status ssh-tunnel@${tunnelName}.service # fails "activating.."
+          create: sleep 5; systemctl status ssh-tunnel@${tunnelName}.service # fails "activating.."
     
     outputs:
       tunnel: ${addTunnel.stdout}
