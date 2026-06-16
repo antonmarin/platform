@@ -4,7 +4,7 @@ version: '3.9'
 services:
   3x-ui:
     # https://github.com/MHSanaei/3x-ui/wiki/Installation
-    image: bigbugcc/3x-ui:v2.8.10
+    image: bigbugcc/3x-ui:v3.2.8
     container_name: 3x-ui
     restart: unless-stopped
     # admin:admin by defaul
@@ -20,8 +20,9 @@ services:
       - cert:/root/cert
     ports:
       - "2053:2053"      # Web UI HTTPS
-      - "2096:2096"      # Web UI HTTP
-      - "443:443"        # Xray VMess/VLESS/Trojan
+      - "2096:2096"      # subscription
+      - "443:443"        # Xray tcp
+      - "8443:8443/udp"      # Xray udp
       - "80:80"          # HTTP fallback/Xray
     # Additional inbound ports (add as needed)
     # - "1080:1080"      # SOCKS proxy
@@ -38,3 +39,4 @@ volumes:
 # * xray -> routing -> add -> domain: ext:geosite_(IR/CN/RU).dat:(ir/cn/ru)-available-only-inside,regexp:.*\.ir$; outbound tag: blocked
 # add connection -> proto vless;port 443; security Reality; flow xtls-rprx-vision; target&sni rotate or set own; transport tcp(raw); uTLS not android -> Get New Cert + Sniffing
 # https://browserleaks.com/ip
+# https://freedns.afraid.org/subdomain/?ls=1
