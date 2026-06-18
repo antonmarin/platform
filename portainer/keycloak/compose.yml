@@ -1,2 +1,84 @@
 ---
-# https://www.keycloak.org/getting-started/getting-started-docker
+version: '3.9'
+
+services:
+  keycloak:
+    restart: unless-stopped
+    networks:
+      - ingress
+      - default
+    healthcheck:
+      test: |
+        bash -c '
+        exec 3<>/dev/tcp/localhost/9000
+        printf "HEAD /health/ready HTTP/1.1\r\nHost: localhost:9000\r\nconnection: close\r\n\r\n" >&3
+        grep -q "HTTP/1.1 200" <&3
+        '
+    depends_on:
+      database:
+        condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.keycloak.rule=Host(`${ROUTE_HOSTNAME}`)"
+      - "traefik.http.routers.keycloak.tls=${IS_TLS_ENABLED}"
+      - "traefik.http.routers.keycloak.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.keycloak.tls.domains[0].main=${ROUTE_HOSTNAME}"
+      - "traefik.http.routers.keycloak.tls.domains[0].sans[0]=${ACME_HOSTNAME}"
+#      - "traefik.http.services.keycloak.loadbalancer.healthcheck.path=/health/ready"
+#      - "traefik.http.services.keycloak.loadbalancer.healthcheck.port=9000"
+    # https://www.keycloak.org/getting-started/getting-started-docker
+    image: quay.io/keycloak/keycloak:26.6
+    command: ["start"]
+    container_name: keycloak
+    environment:
+      # hosting
+      SCHEMA:
+      IS_TLS_ENABLED:
+      ACME_HOSTNAME:
+      ROUTE_HOSTNAME:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      # database
+      KC_DB_URL_HOST: database
+      KC_DB: postgres
+      KC_DB_URL_DATABASE: "${POSTGRES_DB}"
+      KC_DB_PASSWORD: "${POSTGRES_PASSWORD}"
+      KC_DB_USERNAME: "${POSTGRES_USER}"
+      # security
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME: "${ROUTE_HOSTNAME}"
+      KC_HOSTNAME_STRICT: false
+      KC_PROXY_HEADERS: "xforwarded"
+      # observability
+      KC_HEALTH_ENABLED: true
+#    volumes:
+  database:
+    deploy:
+      replicas: 1
+    #      resources:
+    #        reservations:
+    #          memory: 100M
+    #        limits:
+    #          memory: 1G
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 10s
+      retries: 5
+    image: postgres:15-alpine
+    environment:
+      TZ: Europe/Moscow
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+      POSTGRES_DB:
+    volumes:
+      - database:/var/lib/postgresql/data
+
+volumes:
+  database:
+networks:
+  ingress:
+    name: "ingress"
+
+# create realm
+# create user with realm role admin
