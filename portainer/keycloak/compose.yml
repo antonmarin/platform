@@ -35,6 +35,7 @@ services:
       SCHEMA:
       IS_TLS_ENABLED:
       ACME_HOSTNAME:
+      # https://www.punycoder.com
       ROUTE_HOSTNAME:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
