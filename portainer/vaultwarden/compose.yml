@@ -17,7 +17,7 @@ services:
       IS_TLS_ENABLED:
       ACME_HOSTNAME:
       ROUTE_HOSTNAME:
-      DOMAIN: "${SCHEMA}://${ACME_HOSTNAME}"
+      DOMAIN: "${SCHEMA}://${ROUTE_HOSTNAME}"
       # features
       SIGNUPS_ALLOWED: "false"
       INVITATIONS_ALLOWED: "false"
