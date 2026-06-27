@@ -4,3 +4,5 @@ EXPOSE 80
 
 COPY conf.d /etc/nginx/conf.d/
 COPY html /usr/share/nginx/html/
+
+RUN chown -R nginx:nginx /usr/share/nginx/html/
