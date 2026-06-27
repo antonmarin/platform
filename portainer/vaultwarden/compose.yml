@@ -45,7 +45,7 @@ services:
       SMTP_DEBUG: "false"
       # oidc https://github.com/dani-garcia/vaultwarden/wiki/Enabling-SSO-support-using-OpenId-Connect
       SSO_ENABLED: "true"
-      SSO_ONLY: "false" # true after migration
+      SSO_ONLY: "true"
       SSO_SCOPES: "openid profile email offline_access"
       SSO_AUTHORITY:
       SSO_CLIENT_ID:
