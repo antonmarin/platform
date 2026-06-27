@@ -17,7 +17,7 @@ services:
       IS_TLS_ENABLED:
       ACME_HOSTNAME:
       ROUTE_HOSTNAME:
-      DOMAIN: "${SCHEMA}://${ACME_HOSTNAME}"
+      DOMAIN: "${SCHEMA}://${ROUTE_HOSTNAME}"
       # features
       SIGNUPS_ALLOWED: "false"
       INVITATIONS_ALLOWED: "false"
@@ -43,6 +43,13 @@ services:
       # logging
       LOG_LEVEL: "info"
       SMTP_DEBUG: "false"
+      # oidc https://github.com/dani-garcia/vaultwarden/wiki/Enabling-SSO-support-using-OpenId-Connect
+      SSO_ENABLED: "true"
+      SSO_ONLY: "true"
+      SSO_SCOPES: "openid profile email offline_access"
+      SSO_AUTHORITY:
+      SSO_CLIENT_ID:
+      SSO_CLIENT_SECRET:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.vaultwarden.rule=Host(`${ROUTE_HOSTNAME}`)"
