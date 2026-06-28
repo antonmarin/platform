@@ -1,5 +1,13 @@
 name: build-images
-on: [push] # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#push
+on:
+  push:
+    paths:
+      - 'Makefile'
+      - 'Dockerfile'
+  pull_request:
+    paths:
+      - 'Makefile'
+      - 'Dockerfile'
 jobs:
   test:
     name: Integration pipeline
