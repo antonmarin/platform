@@ -75,6 +75,8 @@ ssh:
 fwd-traefik:
 	ssh -NL 8080:localhost:8080 root@$(PLATFORM_SERVER_IP)
 
+build-index: #? update image of index server
+	docker buildx build --push --platform=linux/amd64,linux/arm64 -t antonmarin/clubindex ./portainer/index
 update-utils: #? update platform utils
 	docker buildx build --push --platform=linux/amd64,linux/arm64 -t antonmarin/backuper ./utils/backuper
 

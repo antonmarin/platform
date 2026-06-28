@@ -3,8 +3,7 @@ version: "3.9"
 
 services:
   index:
-    build: .
-    pull_policy: build
+    image: "antonmarin/clubindex:latest"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.index.rule=Host(`${ROUTE_HOSTNAME}`)"
