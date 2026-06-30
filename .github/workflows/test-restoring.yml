@@ -36,21 +36,21 @@ jobs:
           RCLONE_CONFIG_REMOTE_ENDPOINT: ${{ secrets.VW_BACKUP_ENDPOINT }}
           RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID: ${{ secrets.VW_BACKUP_KEY_ID }}
           RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY: ${{ secrets.VW_BACKUP_SECRET }}
-  test-karakeep:
-    name: Test restoring Karakeep backups
+  test-keycloak:
+    name: Test restoring Keycloak backups
     runs-on: ubuntu-latest
     if: ${{ github.ref_name == 'master' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4 # https://github.com/actions/checkout
-      - name: test-karakeep
-        run: make test-restore-karakeep
+      - name: test-keycloak
+        run: make test-restore-keycloak
         env:
-          GPG_PASSPHRASE: ${{ secrets.KARAKEEP_BACKUP_PASSPHRASE }}
-          BACKUP_PATH: ${{ vars.KARAKEEP_BACKUP_PATH }}
-          RCLONE_CONFIG_REMOTE_ENDPOINT: ${{ secrets.KARAKEEP_BACKUP_ENDPOINT }}
-          RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID: ${{ secrets.KARAKEEP_BACKUP_KEY_ID }}
-          RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY: ${{ secrets.KARAKEEP_BACKUP_SECRET }}
+          GPG_PASSPHRASE: ${{ secrets.KEYCLOAK_BACKUP_PASSPHRASE }}
+          BACKUP_PATH: ${{ secrets.KEYCLOAK_BACKUP_PATH }}
+          RCLONE_CONFIG_REMOTE_ENDPOINT: ${{ secrets.KEYCLOAK_BACKUP_ENDPOINT }}
+          RCLONE_CONFIG_REMOTE_ACCESS_KEY_ID: ${{ secrets.KEYCLOAK_BACKUP_KEY_ID }}
+          RCLONE_CONFIG_REMOTE_SECRET_ACCESS_KEY: ${{ secrets.KEYCLOAK_BACKUP_SECRET }}
   test-wallabag:
     name: Test restoring wallabag backups
     runs-on: ubuntu-latest

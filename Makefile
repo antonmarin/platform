@@ -86,8 +86,8 @@ test-restore-lw:
 	@make APP_NAME=linkwarden test-restore-pg
 test-restore-port:
 	@make APP_NAME=portainer test-restore-dir
-test-restore-karakeep:
-	@make APP_NAME=karakeep test-restore-sqlite
+test-restore-keycloak:
+	@make APP_NAME=keycloak test-restore-pg
 test-restore-wallabag:
 	@make APP_NAME=linkwarden test-restore-pg
 

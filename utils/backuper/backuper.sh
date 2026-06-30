@@ -8,6 +8,7 @@ log() {
 	${DEBUG} && printf "$@"
 	return 0
 }
+${DEBUG} && printf 'debug enabled\n'
 
 #################################################################
 
@@ -446,14 +447,15 @@ upload() {
 
 	if [ -n "$RCLONE_REMOTE" ]; then
 		rclone lsd "$RCLONE_REMOTE:$storageDir" >/dev/null 2>&1 || {
-			printf '❌ Storage directory "%s" not found or not directory\n' "$storageDir" >&2
+			printf '❌ Remote storage directory "%s" not found or not directory\n' "$storageDir" >&2
+			log 'Storage failure: %s\n' $(rclone lsd "$RCLONE_REMOTE:$storageDir")
 			return 1
 		}
 		storageDir="$RCLONE_REMOTE:$storageDir"
 	else
 		if [ ! -d "$storageDir" ]; then
 			mkdir -p "$storageDir" ||
-				printf '❌ Storage directory "%s" not found or not directory\n' "$storageDir" >&2 && return 1
+				printf '❌ Local storage directory "%s" not found or not directory\n' "$storageDir" >&2 && return 1
 		fi
 	fi
 
@@ -508,13 +510,13 @@ download() {
 
 	if [ -n "$RCLONE_REMOTE" ]; then
 		rclone lsd "$RCLONE_REMOTE:$storageDir" >/dev/null 2>&1 || {
-			printf '❌ Storage directory "%s" not found or not directory\n' "$storageDir" >&2
+			printf '❌ Remote storage directory "%s" not found or not directory\n' "$storageDir" >&2
 			return 1
 		}
 		storageDir="$RCLONE_REMOTE:$storageDir"
 	else
 		if [ ! -d "$storageDir" ]; then
-			printf '❌ Storage directory "%s" not found or not directory\n' "$storageDir" >&2
+			printf '❌ Local storage directory "%s" not found or not directory\n' "$storageDir" >&2
 			return 1
 		fi
 	fi
