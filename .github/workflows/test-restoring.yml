@@ -46,6 +46,9 @@ jobs:
       - name: test-keycloak
         run: make test-restore-keycloak
         env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: pass
+          POSTGRES_DB: test
           GPG_PASSPHRASE: ${{ secrets.KEYCLOAK_BACKUP_PASSPHRASE }}
           BACKUP_PATH: ${{ secrets.KEYCLOAK_BACKUP_PATH }}
           RCLONE_CONFIG_REMOTE_ENDPOINT: ${{ secrets.KEYCLOAK_BACKUP_ENDPOINT }}
