@@ -107,4 +107,4 @@ test-restore-pg:
 	@$(ensure_var_app_name) \
 	docker compose -f portainer/$$app_name/compose.yml down --remove-orphans || true; \
 	docker volume rm $${app_name}_database || true; \
-	docker compose -f portainer/$$app_name/compose.yml run --remove-orphans backuper '/backuper/backuper.sh pg_restore latest "$$BACKUP_PATH"' && echo "$$app_name backup verified" || "failed to verify backup of $$app_name from $$BACKUP_PATH"
+	docker compose -f portainer/$$app_name/compose.yml run --remove-orphans backuper '/backuper/backuper.sh pg_restore latest "$$BACKUP_PATH"' && echo "$$app_name backup verified" || docker compose -f portainer/$$app_name/compose.yml logs
