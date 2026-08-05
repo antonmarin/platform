@@ -3,6 +3,55 @@ runtime: yaml
 description: Configure existing server via SSH
 
 components: # https://www.pulumi.com/docs/iac/languages-sdks/yaml/yaml-component-reference/
+  Ntp:
+    inputs: # one or more input values
+      serverIp:
+        type: string
+        description: "IP of existing VPS to configure"
+      sshPrivateKey:
+        type: string
+        secret: true
+        description: "Private key content"
+      sshPrivateKeyPass:
+        type: string
+        secret: true
+        default: ""
+        description: "Private key unlock password"
+      sshUser:
+        type: string
+        default: root
+        description: "Remote ssh user"
+    variables: # intermediate variable definitions
+      conn: # https://www.pulumi.com/registry/packages/command/api-docs/remote/command/#connection
+        host: ${serverIp}
+        user: ${sshUser}
+        privateKey: ${sshPrivateKey}
+        privateKeyPassword: ${sshPrivateKeyPass}
+    resources: # one or more sub-resource definitions
+      install:
+        type: command:remote:Command
+        properties:
+          connection: ${conn}
+          create: |
+            #!/usr/bin/env sh
+            mkdir -p /etc/systemd/timesyncd.conf.d
+            tee /etc/systemd/timesyncd.conf.d/pool.ntp.org.conf > /dev/null <<EOF
+            [Time]
+            NTP=pool.ntp.org time.google.com
+            EOF
+            
+            systemctl restart systemd-timesyncd
+      status:
+        type: command:remote:Command
+        options:
+          dependsOn:
+            - ${install}
+        properties:
+          connection: ${conn}
+          create: timedatectl show-timesync
+    outputs: # one or more output values
+      status: "${status.stdout}"
+  
   Curl:
     inputs: # one or more input values
       serverIp:

@@ -26,6 +26,8 @@ config:
     secret: true
 
 resources:
+  ntp:
+    type: existing:Ntp
   curl:
     type: existing:Curl
     properties:
@@ -83,6 +85,7 @@ resources:
       controllerUserPass: ${controllerUserPass}
 
 outputs:
+  ntp: ${ntp.status}
   passauth: ${disable-password.status}
   forwarding: ${enable-forwarding.status}
   docker: ${docker-machine.info}

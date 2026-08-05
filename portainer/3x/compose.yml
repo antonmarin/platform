@@ -40,3 +40,4 @@ volumes:
 # add connection -> proto vless;port 443; security Reality; flow xtls-rprx-vision; target&sni rotate or set own; transport tcp(raw); uTLS not android -> Get New Cert + Sniffing
 # https://browserleaks.com/ip
 # https://freedns.afraid.org/subdomain/?ls=1
+# https://github.com/MHSanaei/3x-ui/wiki/Configuration#getting-ssl
