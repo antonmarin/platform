@@ -28,6 +28,22 @@ services:
     # - "1080:1080"      # SOCKS proxy
     # - "8080:8080"      # HTTP proxy
     # config in /app/bin/config.json
+
+  renew:
+    image: ghcr.io/acmesh-official/acme.sh
+    container_name: "3x-ui-ssl-renew"
+    restart: unless-stopped
+    environment:
+      TZ: "Etc/UTC"
+      ACME_HOSTNAME:
+    volumes:
+      - cert:/root/cert
+#    ports:
+#      - "88:88"      # http port
+    command: [ "daemon" ]
+#    command: [ "--issue","-d","${ACME_HOSTNAME}", "--standalone", "--httpport","88","--debug" ]
+#    acme.sh --renew -d example.com --force
+
 volumes:
   db:
   cert:
