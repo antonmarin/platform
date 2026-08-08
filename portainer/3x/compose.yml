@@ -26,7 +26,7 @@ services:
       - "2096:2096"      # subscription
       - "443:443"        # Xray tcp
       - "8443:8443/udp"      # Xray udp
-      - "80:80"          # HTTP fallback/Xray
+#      - "80:80"          # HTTP fallback/Xray
     # Additional inbound ports (add as needed)
     # - "1080:1080"      # SOCKS proxy
     # - "8080:8080"      # HTTP proxy
@@ -50,11 +50,12 @@ services:
 #      - cert:/root/cert
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - "88:88"      # acme http port
+      - "80:80"      # acme http port
     command: [ "daemon" ]
-#    command: [ "--issue","-d","${ACME_HOSTNAME}", "--standalone", "--httpport","88","--debug" ]
+#    command: [ "--issue","-d","${ACME_HOSTNAME}", "--standalone","--debug" ]
 #    acme.sh --register-account -m my@$ACME_HOSTNAME (from not restricted location)
-#    acme.sh --issue -d $ACME_HOSTNAME --standalone --httpport 88
+#    acme.sh --set-default-ca --server letsencrypt
+#    acme.sh --issue -d $ACME_HOSTNAME --standalone
 #    acme.sh --renew -d $ACME_HOSTNAME --force
 #/root/.acme.sh/ rrqzexxTRLcQlPOLBsWl1fTwInue1jI0k1E4U2V5F0
 volumes:
