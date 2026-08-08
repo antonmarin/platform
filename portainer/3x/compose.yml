@@ -52,12 +52,12 @@ services:
     ports:
       - "80:80"      # acme http port
     command: [ "daemon" ]
-#    command: [ "--issue","-d","${ACME_HOSTNAME}", "--standalone","--debug" ]
 #    acme.sh --register-account -m my@$ACME_HOSTNAME (from not restricted location)
 #    acme.sh --set-default-ca --server letsencrypt
 #    acme.sh --issue -d $ACME_HOSTNAME --standalone
 #    acme.sh --renew -d $ACME_HOSTNAME --force
-#/root/.acme.sh/ rrqzexxTRLcQlPOLBsWl1fTwInue1jI0k1E4U2V5F0
+# https://github.com/acmesh-official/acme.sh/wiki/deploy-to-docker-containers
+#    acme.sh --deploy -d $ACME_HOSTNAME  --deploy-hook docker
 volumes:
   db:
   cert:
