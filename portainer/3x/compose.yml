@@ -13,6 +13,9 @@ services:
       TZ: "Etc/UTC"
       XRAY_VMESS_AEAD_FORCED: "false"
       XUI_DB_FOLDER: "/etc/x-ui"
+      ACME_HOSTNAME:
+    labels:
+      - sh.acme.autoload.domain=${ACME_HOSTNAME}
     devices:
       - /dev/net/tun:/dev/net/tun
     volumes:
@@ -36,17 +39,28 @@ services:
     environment:
       TZ: "Etc/UTC"
       ACME_HOSTNAME:
+      DEPLOY_DOCKER_CONTAINER_LABEL: "sh.acme.autoload.domain=${ACME_HOSTNAME}"
+      DEPLOY_DOCKER_CONTAINER_KEY_FILE: "/root/cert/${ACME_HOSTNAME}/key.pem"
+      DEPLOY_DOCKER_CONTAINER_CERT_FILE: "/root/cert/${ACME_HOSTNAME}/cert.pem"
+      DEPLOY_DOCKER_CONTAINER_CA_FILE: "/root/cert/${ACME_HOSTNAME}/ca.pem"
+      DEPLOY_DOCKER_CONTAINER_FULLCHAIN_FILE: "/root/cert/${ACME_HOSTNAME}/full.pem"
+      DEPLOY_DOCKER_CONTAINER_RELOAD_CMD: "x-ui restart"
     volumes:
-      - cert:/root/cert
-#    ports:
-#      - "88:88"      # http port
+      - acme:/acme.sh
+#      - cert:/root/cert
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "88:88"      # acme http port
     command: [ "daemon" ]
 #    command: [ "--issue","-d","${ACME_HOSTNAME}", "--standalone", "--httpport","88","--debug" ]
-#    acme.sh --renew -d example.com --force
-
+#    acme.sh --register-account -m my@$ACME_HOSTNAME (from not restricted location)
+#    acme.sh --issue -d $ACME_HOSTNAME --standalone --httpport 88
+#    acme.sh --renew -d $ACME_HOSTNAME --force
+#/root/.acme.sh/ rrqzexxTRLcQlPOLBsWl1fTwInue1jI0k1E4U2V5F0
 volumes:
   db:
   cert:
+  acme:
 
 # client from https://v2raytun.com
 # change account pass, default admin/admin
