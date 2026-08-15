@@ -33,6 +33,8 @@ services:
     # config in /app/bin/config.json
 
   renew:
+    deploy:
+      replicas: ${RENEW_REPLICAS:-0}
     image: ghcr.io/acmesh-official/acme.sh
     container_name: "3x-ui-ssl-renew"
     restart: unless-stopped
